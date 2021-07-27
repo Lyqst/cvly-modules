@@ -70,6 +70,86 @@ struct MediumSwitchButton : SvgSwitch
 	}
 };
 
+struct CustomKnobNoRandom : SvgKnob
+{
+	CustomKnobNoRandom()
+	{
+		minAngle = -0.78 * M_PI;
+		maxAngle = 0.78 * M_PI;
+		setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/knob.svg")));
+	}
+
+	void randomize() override {}
+};
+
+struct CustomSmallKnobNoRandom : SvgKnob
+{
+	CustomSmallKnobNoRandom()
+	{
+		minAngle = -0.78 * M_PI;
+		maxAngle = 0.78 * M_PI;
+		setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/knobS.svg")));
+	}
+
+	void randomize() override {}
+};
+
+struct CustomSmallSwitchKnobNoRandom : SvgKnob
+{
+	CustomSmallSwitchKnobNoRandom()
+	{
+		minAngle = -0.78 * M_PI;
+		maxAngle = 0.78 * M_PI;
+		snap = true;
+		smooth = false;
+		setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/knobS.svg")));
+	}
+
+	void randomize() override {}
+};
+
+struct SmallSwitchButtonNoRandom : SvgSwitch
+{
+	SmallSwitchButtonNoRandom()
+	{
+		momentary = false;
+		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/buttonS0.svg")));
+		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/buttonS1.svg")));
+		fb->removeChild(shadow);
+		delete shadow;
+	}
+
+	void randomize() override {}
+};
+
+struct MediumButtonNoRandom : SvgSwitch
+{
+	MediumButtonNoRandom()
+	{
+		momentary = true;
+		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/buttonM0.svg")));
+		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/buttonM1.svg")));
+		fb->removeChild(shadow);
+		delete shadow;
+	}
+
+	void randomize() override {}
+};
+
+struct MediumSwitchButtonNoRandom : SvgSwitch
+{
+	MediumSwitchButtonNoRandom()
+	{
+		momentary = false;
+		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/buttonM0.svg")));
+		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/buttonM1.svg")));
+		fb->removeChild(shadow);
+		delete shadow;
+	}
+
+	void randomize() override {}
+};
+
 struct CustomPort : app::SvgPort
 {
 	CustomPort()
