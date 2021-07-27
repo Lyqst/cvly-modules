@@ -18,10 +18,7 @@ struct Ntrvlc : Module
 		QUANT10_PARAM,
 		QUANT11_PARAM,
 		QUANT12_PARAM,
-		LENGTH1_PARAM,
-		LENGTH2_PARAM,
-		LENGTH3_PARAM,
-		LENGTH4_PARAM,
+		ENUMS(LENGTH_PARAM, 4),
 		ENUMS(ROW1_PARAM, 8),
 		ENUMS(ROW2_PARAM, 8),
 		ENUMS(ROW3_PARAM, 8),
@@ -30,19 +27,13 @@ struct Ntrvlc : Module
 	};
 	enum InputIds
 	{
-		CLOCK1_INPUT,
-		CLOCK2_INPUT,
-		CLOCK3_INPUT,
-		CLOCK4_INPUT,
+		ENUMS(CLOCK_INPUT, 4),
 		NUM_INPUTS
 	};
 	enum OutputIds
 	{
-		POLY_OUT_OUTPUT,
-		OUT1_OUTPUT,
-		OUT2_OUTPUT,
-		OUT3_OUTPUT,
-		OUT4_OUTPUT,
+		POLY_OUTPUT,
+		ENUMS(CV_OUTPUT, 4),
 		NUM_OUTPUTS
 	};
 
@@ -73,10 +64,10 @@ struct Ntrvlc : Module
 		configParam(QUANT10_PARAM, 0.f, 1.f, 0.f, "A");
 		configParam(QUANT11_PARAM, 0.f, 1.f, 0.f, "A#");
 		configParam(QUANT12_PARAM, 0.f, 1.f, 0.f, "B");
-		configParam(LENGTH1_PARAM, 1, 8, 8, "Seq 1 length");
-		configParam(LENGTH2_PARAM, 1, 8, 8, "Seq 2 length");
-		configParam(LENGTH3_PARAM, 1, 8, 8, "Seq 3 length");
-		configParam(LENGTH4_PARAM, 1, 8, 8, "Seq 4 length");
+		configParam(LENGTH_PARAM, 1, 8, 8, "Seq 1 length");
+		configParam(LENGTH_PARAM + 1, 1, 8, 8, "Seq 2 length");
+		configParam(LENGTH_PARAM + 2, 1, 8, 8, "Seq 3 length");
+		configParam(LENGTH_PARAM + 3, 1, 8, 8, "Seq 4 length");
 		for (int i = 0; i < 8; i++)
 		{
 			configParam(ROW1_PARAM + i, -1.f, 1.f, 0, "Seq 1, Step " + std::to_string(i + 1), "");
@@ -90,23 +81,13 @@ struct Ntrvlc : Module
 	int num_notes = 1;
 	float input_scale[12];
 	float scale[13];
-	int step1 = 0;
-	int step2 = 0;
-	int step3 = 0;
-	int step4 = 0;
-	int num_steps1 = 8;
-	int num_steps2 = 8;
-	int num_steps3 = 8;
-	int num_steps4 = 8;
+	int step[4] = {-1};
+	int length[4] = {8};
+	float step_cv[4] = {0};
+	float out_cv[4] = {0};
 	bool stack = true;
-	bool row1_on = false;
-	bool row2_on = false;
-	bool row3_on = false;
-	bool row4_on = false;
-	dsp::SchmittTrigger clock1Trigger;
-	dsp::SchmittTrigger clock2Trigger;
-	dsp::SchmittTrigger clock3Trigger;
-	dsp::SchmittTrigger clock4Trigger;
+	bool row_on[4] = {false};
+	dsp::SchmittTrigger clockTrigger[4];
 	dsp::SchmittTrigger resetTrigger;
 	int cycleCount = 1;
 	int quant_cycle_count = 50;
@@ -118,70 +99,42 @@ struct Ntrvlc : Module
 			cycleCount = quant_cycle_count;
 		}
 
-		process_params();
+		processParams();
 
-		float note = 0;
-		float last_note = 0;
-		float row_value;
+		bool update = processSequences();
 
-		int i = 0;
-
-		if (row1_on)
+		if (update)
 		{
-			row_value = params[ROW1_PARAM + step1].getValue() * range;
-			note = row_value;
-			if (num_notes > 0)
-				note = quantize_cv(note);
-			last_note = note;
-			outputs[OUT1_OUTPUT].setVoltage(note, 0);
-			outputs[POLY_OUT_OUTPUT].setVoltage(note, i++);
-		}
-		else
-			outputs[OUT1_OUTPUT].setVoltage(0, 0);
+			updateLights();
 
-		if (row2_on)
+			float last_cv = 0;
+
+			for (int i = 0; i < 4; i++)
+			{
+				if (row_on[i])
+				{
+					step_cv[i] = (stack ? last_cv : 0) + params[ROW1_PARAM + i * 8 + step[i]].getValue() * range;
+					last_cv = step_cv[i];
+
+					if (num_notes > 0)
+						out_cv[i] = quantizeCv(step_cv[i]);
+					else
+						out_cv[i] = step_cv[i];
+				}
+			}
+		}
+
+		int p = 0;
+		for (int i = 0; i < 4; i++)
 		{
-
-			row_value = params[ROW2_PARAM + step2].getValue() * range;
-			note = (stack ? last_note : 0) + row_value;
-			if (num_notes > 0)
-				note = quantize_cv(note);
-			last_note = note;
-			outputs[OUT2_OUTPUT].setVoltage(note, 0);
-			outputs[POLY_OUT_OUTPUT].setVoltage(note, i++);
+			outputs[CV_OUTPUT + i].setVoltage(out_cv[i], 0);
+			if (row_on[i])
+				outputs[POLY_OUTPUT].setVoltage(out_cv[i], p++);
 		}
-		else
-			outputs[OUT2_OUTPUT].setVoltage(0, 0);
-
-		if (row3_on)
-		{
-			row_value = params[ROW3_PARAM + step3].getValue() * range;
-			note = (stack ? last_note : 0) + row_value;
-			if (num_notes > 0)
-				note = quantize_cv(note);
-			last_note = note;
-			outputs[OUT3_OUTPUT].setVoltage(note, 0);
-			outputs[POLY_OUT_OUTPUT].setVoltage(note, i++);
-		}
-		else
-			outputs[OUT3_OUTPUT].setVoltage(0, 0);
-
-		if (row4_on)
-		{
-			row_value = params[ROW4_PARAM + step4].getValue() * range;
-			note = (stack ? last_note : 0) + row_value;
-			if (num_notes > 0)
-				note = quantize_cv(note);
-			outputs[OUT4_OUTPUT].setVoltage(note, 0);
-			outputs[POLY_OUT_OUTPUT].setVoltage(note, i++);
-		}
-		else
-			outputs[OUT4_OUTPUT].setVoltage(0, 0);
-
-		outputs[POLY_OUT_OUTPUT].setChannels(i);
+		outputs[POLY_OUTPUT].setChannels(p);
 	}
 
-	void process_params()
+	void processParams()
 	{
 		if (cycleCount == 0)
 		{
@@ -211,95 +164,51 @@ struct Ntrvlc : Module
 		}
 
 		stack = params[STACK_PARAM].getValue() > 0.f;
+	}
 
-		row1_on = inputs[CLOCK1_INPUT].isConnected();
-		row2_on = inputs[CLOCK2_INPUT].isConnected();
-		row3_on = inputs[CLOCK3_INPUT].isConnected();
-		row4_on = inputs[CLOCK4_INPUT].isConnected();
+	bool processSequences()
+	{
+		bool update = false;
 
-		num_steps1 = params[LENGTH1_PARAM].getValue();
-		num_steps2 = params[LENGTH2_PARAM].getValue();
-		num_steps3 = params[LENGTH3_PARAM].getValue();
-		num_steps4 = params[LENGTH4_PARAM].getValue();
-
-		if (row1_on)
+		for (int i = 0; i < 4; i++)
 		{
-			if (clock1Trigger.process(inputs[CLOCK1_INPUT].getVoltage()))
+			row_on[i] = inputs[CLOCK_INPUT + i].isConnected();
+			
+			if (length[i] != params[LENGTH_PARAM + i].getValue())
 			{
-				int old_step = step1++;
-				if (step1 >= num_steps1)
-					step1 = 0;
-				updateRowLights(ROW1_LIGHT, old_step, step1);
+				length[i] = params[LENGTH_PARAM + i].getValue();
+				update = true;
 			}
-		}
-		else
-		{
-			updateRowLights(ROW1_LIGHT, step1);
-			step1 = -1;
-		}
 
-		if (row2_on)
-		{
-			if (clock2Trigger.process(inputs[CLOCK2_INPUT].getVoltage()))
+			if (row_on[i])
 			{
-				int old_step = step2++;
-				if (step2 >= num_steps2)
-					step2 = 0;
-				updateRowLights(ROW2_LIGHT, old_step, step2);
+				if (clockTrigger[i].process(inputs[CLOCK_INPUT + i].getVoltage()))
+				{
+					if (++step[i] >= length[i])
+						step[i] = 0;
+					update = true;
+				}
 			}
-		}
-		else
-		{
-			updateRowLights(ROW2_LIGHT, step2);
-			step2 = -1;
-		}
-
-		if (row3_on)
-		{
-			if (clock3Trigger.process(inputs[CLOCK3_INPUT].getVoltage()))
+			else if (step[i] > -1)
 			{
-				int old_step = step3++;
-				if (step3 >= num_steps3)
-					step3 = 0;
-				updateRowLights(ROW3_LIGHT, old_step, step3);
+				step[i] = -1;
+				update = true;
 			}
-		}
-		else
-		{
-			updateRowLights(ROW3_LIGHT, step3);
-			step3 = -1;
-		}
-
-		if (row4_on)
-		{
-			if (clock4Trigger.process(inputs[CLOCK4_INPUT].getVoltage()))
-			{
-				int old_step = step4++;
-				if (step4 >= num_steps4)
-					step4 = 0;
-				updateRowLights(ROW4_LIGHT, old_step, step4);
-			}
-		}
-		else
-		{
-			updateRowLights(ROW4_LIGHT, step4);
-			step4 = -1;
 		}
 
 		if (resetTrigger.process(params[RESET_PARAM].getValue()))
 		{
-			updateRowLights(ROW1_LIGHT, step1, 0);
-			updateRowLights(ROW1_LIGHT, step1, 0);
-			updateRowLights(ROW1_LIGHT, step1, 0);
-			updateRowLights(ROW1_LIGHT, step1, 0);
-			step1 = 0;
-			step2 = 0;
-			step3 = 0;
-			step4 = 0;
+			for (int i = 0; i < 4; i++)
+			{
+				step[i] = 0;
+			}
+			update = true;
 		}
+
+		return update;
 	}
 
-	float quantize_cv(float v)
+	float quantizeCv(float v)
 	{
 		int note;
 		float oct;
@@ -325,64 +234,18 @@ struct Ntrvlc : Module
 		return oct + scale[note];
 	}
 
-	float quantize_note(float n, bool asc)
+	void updateLights()
 	{
-		if (num_notes == 0)
-		{
-			return 0;
-		}
-
-		float oct;
-		float fract = modff(n, &oct);
-		if (oct < 0.f || fract < 0.f)
-		{
-			if (abs(fract) < 1e-7)
-				fract = 0.f;
-			else
-			{
-				fract += 1.f;
-				oct -= 1.f;
+		for(int i = 0; i < 4; i++) {
+			for(int j = 0; j < 8; j++) {
+				float brightness = 0.f;
+				if(step[i] == j)
+					brightness = 0.9f;
+				else if(j < length[i])
+					brightness = 0.1f;
+				lights[ROW1_LIGHT + i * 8 + j].setBrightness(brightness);
 			}
 		}
-		int note = fract * 12;
-		bool found = false;
-		while (!found)
-		{
-			if (input_scale[note] > 0.f)
-			{
-				found = true;
-			}
-			else
-			{
-				if (asc)
-				{
-					note += 1.f;
-					if (note > 11)
-					{
-						note = 0;
-						oct += 1.f;
-					}
-				}
-				else
-				{
-					note -= 1.f;
-					if (note < 0)
-					{
-						note = 11;
-						oct -= 1.f;
-					}
-				}
-			}
-		}
-
-		return (oct + note / 12.f);
-	}
-
-	void updateRowLights(int row, int old_step, int new_step = -1)
-	{
-		lights[row + old_step].setBrightness(0.f);
-		if (new_step > -1)
-			lights[row + new_step].setBrightness(0.75f);
 	}
 };
 
@@ -398,35 +261,35 @@ struct NtrvlcWidget : ModuleWidget
 		addChild(createWidget<CustomScrew>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<CustomScrew>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addParam(createParamCentered<MediumSwitchButton>(Vec(233, 48), module, Ntrvlc::STACK_PARAM));
-		addParam(createParamCentered<MediumButton>(Vec(30, 48), module, Ntrvlc::RESET_PARAM));
-		addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(274, 48), module, Ntrvlc::LENGTH1_PARAM));
-		addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(296, 48), module, Ntrvlc::LENGTH2_PARAM));
-		addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(318, 48), module, Ntrvlc::LENGTH3_PARAM));
-		addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(340, 48), module, Ntrvlc::LENGTH4_PARAM));
-		addParam(createParamCentered<MediumSwitchButton>(Vec(70, 65), module, Ntrvlc::QUANT1_PARAM));
-		addParam(createParamCentered<MediumSwitchButton>(Vec(80, 42), module, Ntrvlc::QUANT2_PARAM));
-		addParam(createParamCentered<MediumSwitchButton>(Vec(90, 65), module, Ntrvlc::QUANT3_PARAM));
-		addParam(createParamCentered<MediumSwitchButton>(Vec(100, 42), module, Ntrvlc::QUANT4_PARAM));
-		addParam(createParamCentered<MediumSwitchButton>(Vec(110, 65), module, Ntrvlc::QUANT5_PARAM));
-		addParam(createParamCentered<MediumSwitchButton>(Vec(130, 65), module, Ntrvlc::QUANT6_PARAM));
-		addParam(createParamCentered<MediumSwitchButton>(Vec(140, 42), module, Ntrvlc::QUANT7_PARAM));
-		addParam(createParamCentered<MediumSwitchButton>(Vec(150, 65), module, Ntrvlc::QUANT8_PARAM));
-		addParam(createParamCentered<MediumSwitchButton>(Vec(160, 42), module, Ntrvlc::QUANT9_PARAM));
-		addParam(createParamCentered<MediumSwitchButton>(Vec(170, 65), module, Ntrvlc::QUANT10_PARAM));
-		addParam(createParamCentered<MediumSwitchButton>(Vec(180, 42), module, Ntrvlc::QUANT11_PARAM));
-		addParam(createParamCentered<MediumSwitchButton>(Vec(190, 65), module, Ntrvlc::QUANT12_PARAM));
+		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(233, 48), module, Ntrvlc::STACK_PARAM));
+		addParam(createParamCentered<MediumButtonNoRandom>(Vec(30, 48), module, Ntrvlc::RESET_PARAM));
+		addParam(createParamCentered<CustomSmallSwitchKnobNoRandom>(Vec(274, 48), module, Ntrvlc::LENGTH_PARAM));
+		addParam(createParamCentered<CustomSmallSwitchKnobNoRandom>(Vec(296, 48), module, Ntrvlc::LENGTH_PARAM + 1));
+		addParam(createParamCentered<CustomSmallSwitchKnobNoRandom>(Vec(318, 48), module, Ntrvlc::LENGTH_PARAM + 2));
+		addParam(createParamCentered<CustomSmallSwitchKnobNoRandom>(Vec(340, 48), module, Ntrvlc::LENGTH_PARAM + 3));
+		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(70, 65), module, Ntrvlc::QUANT1_PARAM));
+		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(80, 42), module, Ntrvlc::QUANT2_PARAM));
+		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(90, 65), module, Ntrvlc::QUANT3_PARAM));
+		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(100, 42), module, Ntrvlc::QUANT4_PARAM));
+		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(110, 65), module, Ntrvlc::QUANT5_PARAM));
+		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(130, 65), module, Ntrvlc::QUANT6_PARAM));
+		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(140, 42), module, Ntrvlc::QUANT7_PARAM));
+		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(150, 65), module, Ntrvlc::QUANT8_PARAM));
+		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(160, 42), module, Ntrvlc::QUANT9_PARAM));
+		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(170, 65), module, Ntrvlc::QUANT10_PARAM));
+		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(180, 42), module, Ntrvlc::QUANT11_PARAM));
+		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(190, 65), module, Ntrvlc::QUANT12_PARAM));
 
 		static const float portX[10] = {30, 70, 109, 148, 187, 226, 265, 304, 343, 386};
-		addInput(createInputCentered<CustomPort>(Vec(portX[0], 123), module, Ntrvlc::CLOCK1_INPUT));
-		addInput(createInputCentered<CustomPort>(Vec(portX[0], 183), module, Ntrvlc::CLOCK2_INPUT));
-		addInput(createInputCentered<CustomPort>(Vec(portX[0], 243), module, Ntrvlc::CLOCK3_INPUT));
-		addInput(createInputCentered<CustomPort>(Vec(portX[0], 303), module, Ntrvlc::CLOCK4_INPUT));
-		addOutput(createOutputCentered<CustomPortOut>(Vec(portX[9], 57), module, Ntrvlc::POLY_OUT_OUTPUT));
-		addOutput(createOutputCentered<CustomPortOut>(Vec(portX[9], 123), module, Ntrvlc::OUT1_OUTPUT));
-		addOutput(createOutputCentered<CustomPortOut>(Vec(portX[9], 183), module, Ntrvlc::OUT2_OUTPUT));
-		addOutput(createOutputCentered<CustomPortOut>(Vec(portX[9], 243), module, Ntrvlc::OUT3_OUTPUT));
-		addOutput(createOutputCentered<CustomPortOut>(Vec(portX[9], 303), module, Ntrvlc::OUT4_OUTPUT));
+		addInput(createInputCentered<CustomPort>(Vec(portX[0], 123), module, Ntrvlc::CLOCK_INPUT));
+		addInput(createInputCentered<CustomPort>(Vec(portX[0], 183), module, Ntrvlc::CLOCK_INPUT + 1));
+		addInput(createInputCentered<CustomPort>(Vec(portX[0], 243), module, Ntrvlc::CLOCK_INPUT + 2));
+		addInput(createInputCentered<CustomPort>(Vec(portX[0], 303), module, Ntrvlc::CLOCK_INPUT + 3));
+		addOutput(createOutputCentered<CustomPortOut>(Vec(portX[9], 57), module, Ntrvlc::POLY_OUTPUT));
+		addOutput(createOutputCentered<CustomPortOut>(Vec(portX[9], 123), module, Ntrvlc::CV_OUTPUT));
+		addOutput(createOutputCentered<CustomPortOut>(Vec(portX[9], 183), module, Ntrvlc::CV_OUTPUT + 1));
+		addOutput(createOutputCentered<CustomPortOut>(Vec(portX[9], 243), module, Ntrvlc::CV_OUTPUT + 2));
+		addOutput(createOutputCentered<CustomPortOut>(Vec(portX[9], 303), module, Ntrvlc::CV_OUTPUT + 3));
 		for (int i = 0; i < 8; i++)
 		{
 			addParam(createParamCentered<CustomKnob>(Vec(portX[i + 1], 131), module, Ntrvlc::ROW1_PARAM + i));
