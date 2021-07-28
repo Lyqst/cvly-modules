@@ -8,15 +8,15 @@
   "authorEmail": "beno.appel@gmail.com",
   "authorUrl": "",
   "pluginUrl": "",
-  "manualUrl": "",
-  "sourceUrl": "",
-  "donateUrl": "",
+  "manualUrl": "https://github.com/Lyqst/cvly-modules/wiki",
+  "sourceUrl": "https://github.com/Lyqst/cvly-modules",
+  "donateUrl": "https://www.buymeacoffee.com/cvly",
   "changelogUrl": "",
   "modules": [
     {
       "slug": "ntrvlc",
       "name": "ntrvlc",
-      "description": "\u001b[B\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[3~\u001b[3~\u001b[3~\u001b[3~\u001b[C\u001busing semitone intervals to create up to 4 voices",
+      "description": "4x8 sequencer with incorporated quantizer",
       "tags": [
         "quantizer",
         "poly",
@@ -26,9 +26,10 @@
     {
       "slug": "stpr",
       "name": "stpr",
-      "description": "8-step sequencer with individual switches s\u001b[C\u001b[C\u001b for each step\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[Dly triggered switches for each step",
+      "description": "Sequencer with switches for each step",
       "tags": [
-        "sequencer"
+        "sequencer",
+        "switch"
       ]
     }
   ]
