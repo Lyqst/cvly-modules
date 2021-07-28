@@ -5,7 +5,6 @@ struct Ntrvlc : Module
 	enum ParamIds
 	{
 		STACK_PARAM,
-		RESET_PARAM,
 		QUANT1_PARAM,
 		QUANT2_PARAM,
 		QUANT3_PARAM,
@@ -28,6 +27,7 @@ struct Ntrvlc : Module
 	enum InputIds
 	{
 		ENUMS(CLOCK_INPUT, 4),
+		RESET_INPUT,
 		NUM_INPUTS
 	};
 	enum OutputIds
@@ -51,7 +51,6 @@ struct Ntrvlc : Module
 	{
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
 		configParam(STACK_PARAM, 0, 1, 1, "Stack intervals");
-		configParam(RESET_PARAM, 0, 1, 0, "Reset");
 		configParam(QUANT1_PARAM, 0.f, 1.f, 0.f, "C");
 		configParam(QUANT2_PARAM, 0.f, 1.f, 0.f, "C#");
 		configParam(QUANT3_PARAM, 0.f, 1.f, 0.f, "D");
@@ -173,7 +172,7 @@ struct Ntrvlc : Module
 		for (int i = 0; i < 4; i++)
 		{
 			row_on[i] = inputs[CLOCK_INPUT + i].isConnected();
-			
+
 			if (length[i] != params[LENGTH_PARAM + i].getValue())
 			{
 				length[i] = params[LENGTH_PARAM + i].getValue();
@@ -196,7 +195,7 @@ struct Ntrvlc : Module
 			}
 		}
 
-		if (resetTrigger.process(params[RESET_PARAM].getValue()))
+		if (resetTrigger.process(inputs[RESET_INPUT].getVoltage()))
 		{
 			for (int i = 0; i < 4; i++)
 			{
@@ -236,12 +235,14 @@ struct Ntrvlc : Module
 
 	void updateLights()
 	{
-		for(int i = 0; i < 4; i++) {
-			for(int j = 0; j < 8; j++) {
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 8; j++)
+			{
 				float brightness = 0.f;
-				if(step[i] == j)
+				if (step[i] == j)
 					brightness = 0.9f;
-				else if(j < length[i])
+				else if (j < length[i])
 					brightness = 0.1f;
 				lights[ROW1_LIGHT + i * 8 + j].setBrightness(brightness);
 			}
@@ -262,7 +263,6 @@ struct NtrvlcWidget : ModuleWidget
 		addChild(createWidget<CustomScrew>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
 		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(233, 48), module, Ntrvlc::STACK_PARAM));
-		addParam(createParamCentered<MediumButtonNoRandom>(Vec(30, 48), module, Ntrvlc::RESET_PARAM));
 		addParam(createParamCentered<CustomSmallSwitchKnobNoRandom>(Vec(274, 48), module, Ntrvlc::LENGTH_PARAM));
 		addParam(createParamCentered<CustomSmallSwitchKnobNoRandom>(Vec(296, 48), module, Ntrvlc::LENGTH_PARAM + 1));
 		addParam(createParamCentered<CustomSmallSwitchKnobNoRandom>(Vec(318, 48), module, Ntrvlc::LENGTH_PARAM + 2));
@@ -281,6 +281,7 @@ struct NtrvlcWidget : ModuleWidget
 		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(190, 65), module, Ntrvlc::QUANT12_PARAM));
 
 		static const float portX[10] = {30, 70, 109, 148, 187, 226, 265, 304, 343, 386};
+		addInput(createInputCentered<CustomPort>(Vec(30, 48), module, Ntrvlc::RESET_INPUT));
 		addInput(createInputCentered<CustomPort>(Vec(portX[0], 123), module, Ntrvlc::CLOCK_INPUT));
 		addInput(createInputCentered<CustomPort>(Vec(portX[0], 183), module, Ntrvlc::CLOCK_INPUT + 1));
 		addInput(createInputCentered<CustomPort>(Vec(portX[0], 243), module, Ntrvlc::CLOCK_INPUT + 2));
