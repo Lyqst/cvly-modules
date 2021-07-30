@@ -24,6 +24,14 @@
       ]
     },
     {
+      "slug": "ntrvlx",
+      "name": "ntrvlx",
+      "description": "ntrvlc expander with output triggers and stacking configuration",
+      "tags": [
+        "expander"
+      ]
+    },
+    {
       "slug": "stpr",
       "name": "stpr",
       "description": "Sequencer with switches for each step",
