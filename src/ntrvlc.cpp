@@ -47,6 +47,8 @@ struct Ntrvlc : Module
 		NUM_LIGHTS
 	};
 
+	float rightMessages[2][4] = {};
+
 	Ntrvlc()
 	{
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
@@ -74,6 +76,9 @@ struct Ntrvlc : Module
 			configParam(ROW3_PARAM + i, -1.f, 1.f, 0, "Seq 3, Step " + std::to_string(i + 1), "");
 			configParam(ROW4_PARAM + i, -1.f, 1.f, 0, "Seq 4, Step " + std::to_string(i + 1), "");
 		}
+
+		rightExpander.producerMessage = rightMessages[0];
+		rightExpander.consumerMessage = rightMessages[1];
 	}
 
 	int range = 1;
@@ -90,12 +95,34 @@ struct Ntrvlc : Module
 	dsp::SchmittTrigger resetTrigger;
 	int cycleCount = 1;
 	int quant_cycle_count = 50;
+	float stack_weight = 1.f;
+	bool stack_snap = false;
 
 	void process(const ProcessArgs &args) override
 	{
 		if (--cycleCount < 0)
 		{
 			cycleCount = quant_cycle_count;
+		}
+
+		bool expanderPresent = (rightExpander.module && rightExpander.module->model == modelNtrvlx);
+		float *messagesFromExpander = (float *)rightExpander.consumerMessage;
+
+		if (expanderPresent)
+		{
+			stack_weight = messagesFromExpander[0];
+
+			if (messagesFromExpander[1] > 0.1f)
+				stack_snap = true;
+			else
+				stack_snap = false;
+
+			rightExpander.module->leftExpander.messageFlipRequested = true;
+		}
+		else
+		{
+			stack_weight = 1.f;
+			stack_snap = false;
 		}
 
 		processParams();
@@ -107,18 +134,22 @@ struct Ntrvlc : Module
 			updateLights();
 
 			float last_cv = 0;
+			int count = 0;
 
 			for (int i = 0; i < 4; i++)
 			{
 				if (row_on[i])
 				{
-					step_cv[i] = (stack ? last_cv : 0) + params[ROW1_PARAM + i * 8 + step[i]].getValue() * range;
+					step_cv[i] = (stack ? last_cv * stack_weight : 0) + params[ROW1_PARAM + i * 8 + step[i]].getValue() * range;
+					step_cv[i] = stack && stack_snap && count > 0 ? step_cv[i] / (1.f + stack_weight) : step_cv[i];
 					last_cv = step_cv[i];
 
 					if (num_notes > 0)
 						out_cv[i] = quantizeCv(step_cv[i]);
 					else
 						out_cv[i] = step_cv[i];
+
+					count++;
 				}
 			}
 		}
@@ -129,6 +160,12 @@ struct Ntrvlc : Module
 			outputs[CV_OUTPUT + i].setVoltage(out_cv[i], 0);
 			if (row_on[i])
 				outputs[POLY_OUTPUT].setVoltage(out_cv[i], p++);
+
+			if (expanderPresent)
+			{
+				float *messagesToExpander = (float *)(rightExpander.module->leftExpander.producerMessage);
+				messagesToExpander[i] = out_cv[i];
+			}
 		}
 		outputs[POLY_OUTPUT].setChannels(p);
 	}
