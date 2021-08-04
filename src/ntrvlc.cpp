@@ -49,6 +49,24 @@ struct Ntrvlc : Module
 
 	float rightMessages[2][4] = {};
 
+	json_t *dataToJson() override
+	{
+		json_t *rootJ = json_object();
+
+		// range
+		json_object_set_new(rootJ, "range", json_integer(range));
+
+		return rootJ;
+	}
+
+	void dataFromJson(json_t *rootJ) override
+	{
+		// range
+		json_t *rangeJ = json_object_get(rootJ, "range");
+		if (rangeJ)
+			range = json_integer_value(rangeJ);
+	}
+
 	Ntrvlc()
 	{
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
@@ -97,6 +115,8 @@ struct Ntrvlc : Module
 	int quant_cycle_count = 50;
 	float stack_weight = 1.f;
 	bool stack_snap = false;
+	float last_out_cv[4] = {0.f};
+	bool change[4] = {false};
 
 	void process(const ProcessArgs &args) override
 	{
@@ -149,6 +169,12 @@ struct Ntrvlc : Module
 					else
 						out_cv[i] = step_cv[i];
 
+					if (last_out_cv[i] != out_cv[i])
+					{
+						change[i] = true;
+						last_out_cv[i] = out_cv[i];
+					}
+
 					count++;
 				}
 			}
@@ -160,13 +186,15 @@ struct Ntrvlc : Module
 			outputs[CV_OUTPUT + i].setVoltage(out_cv[i], 0);
 			if (row_on[i])
 				outputs[POLY_OUTPUT].setVoltage(out_cv[i], p++);
-
-			if (expanderPresent)
-			{
-				float *messagesToExpander = (float *)(rightExpander.module->leftExpander.producerMessage);
-				messagesToExpander[i] = out_cv[i];
-			}
 		}
+
+		if (expanderPresent)
+		{
+			float *messagesToExpander = (float *)(rightExpander.module->leftExpander.producerMessage);
+			for (int i = 0; i < 4; i++)
+				messagesToExpander[i] = row_on[i] ? (change[i] ? 1 : 0) : -1;
+		}
+
 		outputs[POLY_OUTPUT].setChannels(p);
 	}
 
@@ -208,6 +236,7 @@ struct Ntrvlc : Module
 
 		for (int i = 0; i < 4; i++)
 		{
+			change[i] = false;
 			row_on[i] = inputs[CLOCK_INPUT + i].isConnected();
 
 			if (length[i] != params[LENGTH_PARAM + i].getValue())

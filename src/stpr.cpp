@@ -43,6 +43,24 @@ struct Stpr : Module
 	dsp::SchmittTrigger resetTrigger;
 	dsp::SchmittTrigger stepTrigger[8];
 
+	json_t *dataToJson() override
+	{
+		json_t *rootJ = json_object();
+
+		// range
+		json_object_set_new(rootJ, "range", json_integer(range));
+
+		return rootJ;
+	}
+
+	void dataFromJson(json_t *rootJ) override
+	{
+		// range
+		json_t *rangeJ = json_object_get(rootJ, "range");
+		if (rangeJ)
+			range = json_integer_value(rangeJ);
+	}
+
 	void process(const ProcessArgs &args) override
 	{
 		processStepTriggers();

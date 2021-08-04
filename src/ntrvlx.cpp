@@ -27,7 +27,25 @@ struct Ntrvlx : Module
 
     dsp::PulseGenerator pulseGenerator[4];
     float leftMessages[2][4] = {};
-    float last_out_cv[4] = {0.f};
+    bool poly_out = false;
+
+    json_t *dataToJson() override
+    {
+        json_t *rootJ = json_object();
+
+        // poly out
+        json_object_set_new(rootJ, "poly out", json_boolean(poly_out));
+
+        return rootJ;
+    }
+
+    void dataFromJson(json_t *rootJ) override
+    {
+        // poly out
+        json_t *polyJ = json_object_get(rootJ, "poly out");
+        if (polyJ)
+            poly_out = json_boolean_value(polyJ);
+    }
 
     Ntrvlx()
     {
@@ -51,16 +69,22 @@ struct Ntrvlx : Module
             leftExpander.module->rightExpander.messageFlipRequested = true;
 
             float *messagesFromMother = (float *)leftExpander.consumerMessage;
+
+            int p = 0;
+
             for (int i = 0; i < 4; i++)
             {
-                if (messagesFromMother[i] != last_out_cv[i])
-                {
+                if (messagesFromMother[i] > 0.1f)
                     pulseGenerator[i].trigger(1e-3f);
-                    last_out_cv[i] = messagesFromMother[i];
-                }
+
                 bool pulse = pulseGenerator[i].process(args.sampleTime);
                 outputs[TRIGGER_OUTPUT + i].setVoltage(pulse ? 10.0 : 0.0);
+
+                if (poly_out && messagesFromMother[i] >= 0)
+                    outputs[TRIGGER_OUTPUT].setVoltage(pulse ? 10.0 : 0.0, p++);
             }
+
+            outputs[TRIGGER_OUTPUT].setChannels(poly_out ? p : 1);
         }
     }
 };
@@ -82,6 +106,26 @@ struct NtrvlxWidget : ModuleWidget
         addOutput(createOutputCentered<CustomPortOut>(Vec(posX, 183), module, Ntrvlx::TRIGGER_OUTPUT + 1));
         addOutput(createOutputCentered<CustomPortOut>(Vec(posX, 243), module, Ntrvlx::TRIGGER_OUTPUT + 2));
         addOutput(createOutputCentered<CustomPortOut>(Vec(posX, 303), module, Ntrvlx::TRIGGER_OUTPUT + 3));
+    }
+
+    void appendContextMenu(Menu *menu) override
+    {
+        Ntrvlx *module = dynamic_cast<Ntrvlx *>(this->module);
+
+        menu->addChild(new MenuEntry);
+
+        struct PolyItem : MenuItem
+        {
+            Ntrvlx *module;
+            void onAction(const event::Action &e) override
+            {
+                module->poly_out = !module->poly_out;
+            }
+        };
+        PolyItem *polyItem = createMenuItem<PolyItem>("First output as poly");
+        polyItem->rightText = CHECKMARK(module->poly_out);
+        polyItem->module = module;
+        menu->addChild(polyItem);
     }
 };
 
