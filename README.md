@@ -1,5 +1,5 @@
 # cvly
-*Pronounced cee-vly*
+*Pronounced cee-vli*
 ***
 VCV Rack modules created by Benja Appel (aka Lyqst) :whale2: 
 ***
