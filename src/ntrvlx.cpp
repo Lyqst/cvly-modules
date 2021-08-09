@@ -22,6 +22,7 @@ struct Ntrvlx : Module
 
     enum LightIds
     {
+        CONNECTED_LIGHT,
         NUM_LIGHTS
     };
 
@@ -86,6 +87,8 @@ struct Ntrvlx : Module
 
             outputs[TRIGGER_OUTPUT].setChannels(poly_out ? p : 1);
         }
+
+        lights[CONNECTED_LIGHT].setBrightness(motherPresent ? 0.8f : 0.0f);
     }
 };
 
@@ -106,6 +109,8 @@ struct NtrvlxWidget : ModuleWidget
         addOutput(createOutputCentered<CustomPortOut>(Vec(posX, 183), module, Ntrvlx::TRIGGER_OUTPUT + 1));
         addOutput(createOutputCentered<CustomPortOut>(Vec(posX, 243), module, Ntrvlx::TRIGGER_OUTPUT + 2));
         addOutput(createOutputCentered<CustomPortOut>(Vec(posX, 303), module, Ntrvlx::TRIGGER_OUTPUT + 3));
+
+        addChild(createLightCentered<SmallLight<GreenLight>>(Vec(11, 311), module, Ntrvlx::CONNECTED_LIGHT));
     }
 
     void appendContextMenu(Menu *menu) override
