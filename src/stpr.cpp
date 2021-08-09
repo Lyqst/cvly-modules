@@ -5,6 +5,7 @@ struct Stpr : Module
 	enum ParamIds
 	{
 		ENUMS(STEP_PARAM, 8),
+		ENUMS(STEP_ON_PARAM, 8),
 		NUM_PARAMS
 	};
 	enum InputIds
@@ -22,7 +23,6 @@ struct Stpr : Module
 	enum LightIds
 	{
 		ENUMS(STEP_LIGHT, 8),
-		ENUMS(TRIGGER_LIGHT, 8),
 		NUM_LIGHTS
 	};
 
@@ -32,13 +32,12 @@ struct Stpr : Module
 		for (int i = 0; i < 8; i++)
 		{
 			configParam(STEP_PARAM + i, -1.f, 1.f, 0, "Step " + std::to_string(i + 1), "");
+			configParam(STEP_ON_PARAM + i, 0, 1, 1, "Step " + std::to_string(i + 1) + " on", "");
 		}
 	}
 
 	int curr_step = 0;
 	int range = 1;
-	bool step_on[8] = {true};
-	bool default_state = true;
 	dsp::SchmittTrigger clockTrigger;
 	dsp::SchmittTrigger resetTrigger;
 	dsp::SchmittTrigger stepTrigger[8];
@@ -76,7 +75,7 @@ struct Stpr : Module
 		{
 			for (int i = 0; i < 8; i++)
 			{
-				step_on[i] = true;
+				params[STEP_ON_PARAM + i].setValue(1);
 			}
 			updateStepLights(curr_step);
 			curr_step = 0;
@@ -90,11 +89,10 @@ struct Stpr : Module
 	{
 		for (int i = 0; i < 8; i++)
 		{
-			if (!inputs[TRIGGER_INPUT + i].isConnected())
-				step_on[i] = default_state;
-			else if (stepTrigger[i].process(inputs[TRIGGER_INPUT + i].getVoltage()))
-				step_on[i] = !step_on[i];
-			lights[TRIGGER_LIGHT + i].setBrightness(step_on[i] ? 0.75f : 0.f);
+			int step_on_value = params[STEP_ON_PARAM + i].getValue();
+			if (stepTrigger[i].process(inputs[TRIGGER_INPUT + i].getVoltage()))
+				step_on_value = step_on_value ? 0 : 1;
+			params[STEP_ON_PARAM + i].setValue(step_on_value);
 		}
 	}
 
@@ -105,12 +103,12 @@ struct Stpr : Module
 		{
 			if (curr_step + n < 8)
 			{
-				if (step_on[curr_step + n])
+				if (params[STEP_ON_PARAM + curr_step + n].getValue())
 					return curr_step + n;
 			}
 			else
 			{
-				if (step_on[curr_step + n - 8])
+				if (params[STEP_ON_PARAM + curr_step + n - 8].getValue())
 					return curr_step + n - 8;
 			}
 			n++;
@@ -144,7 +142,7 @@ struct StprWidget : ModuleWidget
 		{
 			addChild(createLightCentered<SmallLight<GreenLight>>(Vec(85, portY[i]), module, Stpr::STEP_LIGHT + i));
 			addParam(createParamCentered<CustomSmallKnob>(Vec(105, portY[i]), module, Stpr::STEP_PARAM + i));
-			addChild(createLightCentered<SmallLight<GreenLight>>(Vec(132, portY[i]), module, Stpr::TRIGGER_LIGHT + i));
+			addParam(createParamCentered<SmallSwitchButtonNoRandom>(Vec(132, portY[i]), module, Stpr::STEP_ON_PARAM + i));
 			addInput(createInputCentered<CustomPort>(Vec(152, portY[i]), module, Stpr::TRIGGER_INPUT + i));
 		}
 
