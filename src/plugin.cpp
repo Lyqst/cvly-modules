@@ -9,6 +9,7 @@ void init(Plugin* p) {
 
 	// Add modules here
 	// p->addModel(modelMyModule);
+	p->addModel(modelCrcl);
 	p->addModel(modelNtrvlc);
 	p->addModel(modelNtrvlx);
 	p->addModel(modelStpr);
