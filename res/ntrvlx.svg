@@ -37,15 +37,15 @@
      showgrid="false"
      showguides="false"
      inkscape:guide-bbox="true"
-     inkscape:zoom="4.3943793"
-     inkscape:cx="-0.69240177"
-     inkscape:cy="428.87669"
+     inkscape:zoom="2.1971897"
+     inkscape:cx="145.19395"
+     inkscape:cy="275.71973"
      inkscape:window-width="1856"
      inkscape:window-height="1057"
      inkscape:window-x="56"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer1"
      width="142.24mm"
      units="mm"
      inkscape:document-rotation="0">
@@ -172,12 +172,14 @@
        x="0"
        y="-1.7763568e-15" />
     <rect
-       style="fill:#616061;fill-opacity:1;stroke-width:0.348765"
+       style="fill:#616061;fill-opacity:1;stroke-width:0.348765;stroke:#78d8c8;stroke-opacity:1"
        id="rect40273"
        width="14.980062"
        height="76.091553"
        x="7.4894338"
-       y="34.289585" />
+       y="34.289585"
+       rx="1"
+       ry="1" />
   </g>
   <g
      inkscape:groupmode="layer"

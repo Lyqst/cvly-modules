@@ -1,18 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="60.959999mm"
    height="128.5mm"
    viewBox="0 0 60.959999 128.5"
    version="1.1"
    id="svg2129"
    sodipodi:docname="stpr.svg"
-   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
+   inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)">
+  <metadata
+     id="metadata8134">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
   <sodipodi:namedview
      id="namedview2131"
      pagecolor="#505050"
@@ -35,7 +47,8 @@
      inkscape:window-x="56"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer3" />
+     inkscape:current-layer="layer3"
+     inkscape:document-rotation="0" />
   <defs
      id="defs2126">
     <pattern
@@ -59,12 +72,14 @@
        x="-2.220446e-15"
        y="5.3290705e-15" />
     <rect
-       style="fill:#616061;fill-opacity:1;stroke:none;stroke-width:0.442214"
+       style="fill:#616061;fill-opacity:1;stroke:#78d8c8;stroke-width:0.453758;stroke-opacity:1"
        id="rect79966"
        width="17.821413"
-       height="16.857418"
+       height="17.749001"
        x="1.7818159"
-       y="95.363632" />
+       y="94.472054"
+       rx="1"
+       ry="1.0528896" />
     <text
        xml:space="preserve"
        style="font-size:5.64444px;line-height:1.25;font-family:Poppins;-inkscape-font-specification:'Poppins, Normal';stroke-width:0.264583"
@@ -103,9 +118,9 @@
          x="-13.818022"
          y="14.692579" /></text>
     <path
-       id="path15640"
-       style="fill:#78d8c8;fill-opacity:1;stroke-width:0.0289078;stroke-linejoin:bevel;stroke-dasharray:0.231261, 0.115631"
-       d="m 16.148182,57.748397 c -0.606898,0.895599 -1.560811,1.031617 -2.235738,0.377345 0.06813,0.530655 0.538701,1.043318 1.050457,1.132204 0.04133,2.300855 -1.560135,4.198868 -3.669315,3.938205 -0.04771,-0.481575 0.171595,-1.009301 0.623202,-1.502318 -0.549835,0.160754 -0.583755,0.111247 -1.047404,0.380904 -0.383814,0.228148 -0.683843,0.49751 -0.9002758,0.789665 l -4.933427,-1.3219 c 0.08401,0.908654 0.406739,1.801487 0.996006,2.576625 1.384184,1.983691 4.1802588,2.732446 6.3758878,1.760533 2.548388,-1.010551 3.94391,-4.15217 3.039891,-6.682807 0.286129,-0.121193 0.505923,-0.371471 0.637914,-0.842322 0.07693,-0.283822 0.0489,-0.293963 0.0628,-0.606134 z" />
+       id="path15640-5"
+       style="display:inline;opacity:0.996;fill:#161516;fill-opacity:1;stroke:#78d8c8;stroke-width:0.264583;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 16.146301,57.912374 c -0.606898,0.8956 -1.560811,1.03162 -2.235738,0.37735 0.06813,0.53065 0.538701,1.04332 1.050457,1.1322 0.04133,2.30086 -1.560135,4.19887 -3.669314,3.93821 -0.04771,-0.48158 0.171595,-1.0093 0.623202,-1.50232 -0.549835,0.16075 -0.583755,0.11125 -1.047404,0.3809 -0.383814,0.22815 -0.683843,0.49751 -0.9002756,0.78967 l -4.933427,-1.3219 c 0.08401,0.90865 0.406739,1.80148 0.996006,2.57662 1.384184,1.98369 4.1802586,2.73245 6.3758876,1.76054 2.548387,-1.01056 3.943909,-4.15217 3.03989,-6.68281 0.286129,-0.12119 0.505923,-0.37147 0.637914,-0.84232 0.07693,-0.28383 0.0489,-0.29397 0.0628,-0.60614 z" />
   </g>
   <g
      inkscape:groupmode="layer"
