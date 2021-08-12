@@ -363,10 +363,10 @@ struct NtrvlcWidget : ModuleWidget
 			addParam(createParamCentered<CustomKnob>(Vec(portX[i + 1], 191), module, Ntrvlc::ROW2_PARAM + i));
 			addParam(createParamCentered<CustomKnob>(Vec(portX[i + 1], 251), module, Ntrvlc::ROW3_PARAM + i));
 			addParam(createParamCentered<CustomKnob>(Vec(portX[i + 1], 311), module, Ntrvlc::ROW4_PARAM + i));
-			addChild(createLight<SmallLight<GreenLight>>(Vec(portX[i + 1] - 3, 102), module, Ntrvlc::ROW1_LIGHT + i));
-			addChild(createLight<SmallLight<GreenLight>>(Vec(portX[i + 1] - 3, 162), module, Ntrvlc::ROW2_LIGHT + i));
-			addChild(createLight<SmallLight<GreenLight>>(Vec(portX[i + 1] - 3, 222), module, Ntrvlc::ROW3_LIGHT + i));
-			addChild(createLight<SmallLight<GreenLight>>(Vec(portX[i + 1] - 3, 282), module, Ntrvlc::ROW4_LIGHT + i));
+			addChild(createLight<SmallLight<CustomGreenLight>>(Vec(portX[i + 1] - 3, 102), module, Ntrvlc::ROW1_LIGHT + i));
+			addChild(createLight<SmallLight<CustomGreenLight>>(Vec(portX[i + 1] - 3, 162), module, Ntrvlc::ROW2_LIGHT + i));
+			addChild(createLight<SmallLight<CustomGreenLight>>(Vec(portX[i + 1] - 3, 222), module, Ntrvlc::ROW3_LIGHT + i));
+			addChild(createLight<SmallLight<CustomGreenLight>>(Vec(portX[i + 1] - 3, 282), module, Ntrvlc::ROW4_LIGHT + i));
 		}
 	}
 

@@ -110,7 +110,7 @@ struct NtrvlxWidget : ModuleWidget
         addOutput(createOutputCentered<CustomPortOut>(Vec(posX, 243), module, Ntrvlx::TRIGGER_OUTPUT + 2));
         addOutput(createOutputCentered<CustomPortOut>(Vec(posX, 303), module, Ntrvlx::TRIGGER_OUTPUT + 3));
 
-        addChild(createLightCentered<SmallLight<GreenLight>>(Vec(11, 311), module, Ntrvlx::CONNECTED_LIGHT));
+        addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(11, 311), module, Ntrvlx::CONNECTED_LIGHT));
     }
 
     void appendContextMenu(Menu *menu) override

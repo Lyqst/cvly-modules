@@ -12,6 +12,18 @@ struct CustomKnob : SvgKnob
 	}
 };
 
+struct CustomSwitchKnob : SvgKnob
+{
+	CustomSwitchKnob()
+	{
+		minAngle = -0.78 * M_PI;
+		maxAngle = 0.78 * M_PI;
+		snap = true;
+		smooth = false;
+		setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/knob.svg")));
+	}
+};
+
 struct CustomSmallKnob : SvgKnob
 {
 	CustomSmallKnob()
@@ -166,10 +178,20 @@ struct CustomPortOut : app::SvgPort
 	}
 };
 
+struct CustomGreenLight : ModuleLightWidget
+{
+	CustomGreenLight()
+	{
+		bgColor = nvgRGB(0x8e, 0x8e, 0x8e);
+		borderColor = nvgRGB(0x1d, 0x1d, 0x1b);
+		addBaseColor(nvgRGB(0x78, 0xD8, 0xC8));
+	}
+};
+
 // Random rotation screw code by stoermelder
 struct CustomScrew : app::SvgScrew
 {
-	widget::TransformWidget* tw;
+	widget::TransformWidget *tw;
 
 	CustomScrew()
 	{

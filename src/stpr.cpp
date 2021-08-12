@@ -140,7 +140,7 @@ struct StprWidget : ModuleWidget
 		addInput(createInputCentered<CustomPort>(Vec(32, portY[2] - 22), module, Stpr::RESET_INPUT));
 		for (int i = 0; i < 8; i++)
 		{
-			addChild(createLightCentered<SmallLight<GreenLight>>(Vec(85, portY[i]), module, Stpr::STEP_LIGHT + i));
+			addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(85, portY[i]), module, Stpr::STEP_LIGHT + i));
 			addParam(createParamCentered<CustomSmallKnob>(Vec(105, portY[i]), module, Stpr::STEP_PARAM + i));
 			addParam(createParamCentered<SmallSwitchButtonNoRandom>(Vec(132, portY[i]), module, Stpr::STEP_ON_PARAM + i));
 			addInput(createInputCentered<CustomPort>(Vec(152, portY[i]), module, Stpr::TRIGGER_INPUT + i));

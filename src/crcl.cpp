@@ -226,9 +226,9 @@ struct CrclWidget : ModuleWidget
         addInput(createInputCentered<CustomPort>(Vec(28, 142), module, Crcl::RESET_INPUT));
 
         addParam(createParamCentered<MediumButtonNoRandom>(Vec(150, 37), module, Crcl::MODE_PARAM));
-        addChild(createLightCentered<SmallLight<GreenLight>>(Vec(130, 57), module, Crcl::MODE_LIGHT));
-        addChild(createLightCentered<SmallLight<GreenLight>>(Vec(130, 68), module, Crcl::MODE_LIGHT + 1));
-        addChild(createLightCentered<SmallLight<GreenLight>>(Vec(130, 79), module, Crcl::MODE_LIGHT + 2));
+        addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(130, 57), module, Crcl::MODE_LIGHT));
+        addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(130, 68), module, Crcl::MODE_LIGHT + 1));
+        addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(130, 79), module, Crcl::MODE_LIGHT + 2));
 
         addOutput(createOutputCentered<CustomPortOut>(Vec(267, 38), module, Crcl::CV_OUTPUT));
         addOutput(createOutputCentered<CustomPortOut>(Vec(267, 90), module, Crcl::TRIGGER_OUTPUT));
@@ -240,7 +240,7 @@ struct CrclWidget : ModuleWidget
         for (int i = 0; i < 12; i++)
         {
             addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(center.x + r * sin(M_PI * i / 6), center.y - r * cos(M_PI * i / 6)), module, Crcl::CIRCLE_PARAM + i));
-            addChild(createLightCentered<SmallLight<GreenLight>>(Vec(center.x + r2 * sin(M_PI * i / 6), center.y - r2 * cos(M_PI * i / 6)), module, Crcl::CIRCLE_LIGHT + i));
+            addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(center.x + r2 * sin(M_PI * i / 6), center.y - r2 * cos(M_PI * i / 6)), module, Crcl::CIRCLE_LIGHT + i));
         }
     }
 
