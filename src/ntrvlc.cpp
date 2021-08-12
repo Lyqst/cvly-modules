@@ -307,9 +307,9 @@ struct Ntrvlc : Module
 			{
 				float brightness = 0.f;
 				if (step[i] == j)
-					brightness = 0.9f;
+					brightness = 1.f;
 				else if (j < length[i])
-					brightness = 0.1f;
+					brightness = 0.2f;
 				lights[ROW1_LIGHT + i * 8 + j].setBrightness(brightness);
 			}
 		}

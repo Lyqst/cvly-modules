@@ -120,7 +120,7 @@ struct Stpr : Module
 	{
 		lights[STEP_LIGHT + old_step].setBrightness(0.f);
 		if (new_step > -1)
-			lights[STEP_LIGHT + new_step].setBrightness(0.75f);
+			lights[STEP_LIGHT + new_step].setBrightness(1.f);
 	}
 };
 

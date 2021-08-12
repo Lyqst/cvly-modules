@@ -88,7 +88,7 @@ struct Ntrvlx : Module
             outputs[TRIGGER_OUTPUT].setChannels(poly_out ? p : 1);
         }
 
-        lights[CONNECTED_LIGHT].setBrightness(motherPresent ? 0.8f : 0.0f);
+        lights[CONNECTED_LIGHT].setBrightness(motherPresent ? 1.f : 0.0f);
     }
 };
 

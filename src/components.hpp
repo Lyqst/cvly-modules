@@ -182,8 +182,8 @@ struct CustomGreenLight : ModuleLightWidget
 {
 	CustomGreenLight()
 	{
-		bgColor = nvgRGB(0x8e, 0x8e, 0x8e);
-		borderColor = nvgRGB(0x1d, 0x1d, 0x1b);
+		bgColor = nvgRGB(0x61, 0x60, 0x61);
+		borderColor = nvgRGB(0x1c, 0x1c, 0x21);
 		addBaseColor(nvgRGB(0x78, 0xD8, 0xC8));
 	}
 };
