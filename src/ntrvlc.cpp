@@ -102,9 +102,10 @@ struct Ntrvlc : Module
 	int range = 1;
 	int num_notes = 1;
 	float input_scale[12];
-	float scale[13];
+	int scale[12];
 	int step[4] = {-1};
 	int length[4] = {8};
+	float all_cv[32] = {0};
 	float step_cv[4] = {0};
 	float out_cv[4] = {0};
 	bool stack = true;
@@ -117,6 +118,10 @@ struct Ntrvlc : Module
 	bool stack_snap = false;
 	float last_out_cv[4] = {0.f};
 	bool change[4] = {false};
+	int led_note = 0;
+	int led_oct = 0;
+	float led_timer = 0;
+	const float max_led_time = 3;
 
 	void process(const ProcessArgs &args) override
 	{
@@ -160,7 +165,7 @@ struct Ntrvlc : Module
 			{
 				if (row_on[i])
 				{
-					step_cv[i] = (stack ? last_cv * stack_weight : 0) + params[ROW1_PARAM + i * 8 + step[i]].getValue() * range;
+					step_cv[i] = (stack ? last_cv * stack_weight : 0) + all_cv[i * 8 + step[i]] * range;
 					step_cv[i] = stack && stack_snap && count > 0 ? step_cv[i] / (1.f + stack_weight) : step_cv[i];
 					last_cv = step_cv[i];
 
@@ -195,6 +200,8 @@ struct Ntrvlc : Module
 				messagesToExpander[i] = row_on[i] ? (change[i] ? 1 : 0) : -1;
 		}
 
+		led_timer -= args.sampleTime;
+
 		outputs[POLY_OUTPUT].setChannels(p);
 	}
 
@@ -215,16 +222,25 @@ struct Ntrvlc : Module
 			input_scale[10] = params[QUANT11_PARAM].getValue();
 			input_scale[11] = params[QUANT12_PARAM].getValue();
 
-			int note = 0;
+			num_notes = 0;
 			for (int i = 0; i < 12; i++)
 			{
 				if (input_scale[i] > 0.0)
 				{
-					scale[note++] = i / 12.f;
+					scale[num_notes++] = i;
 				}
 			}
-			num_notes = note;
-			scale[num_notes] = scale[0] + 1;
+
+			for (int i = 0; i < 32; i++)
+			{
+				float i_cv = params[ROW1_PARAM + i].getValue();
+				if (i_cv != all_cv[i])
+				{
+					all_cv[i] = i_cv;
+					quantizeCv(i_cv * range, &led_note, &led_oct);
+					led_timer = max_led_time;
+				}
+			}
 		}
 
 		stack = params[STACK_PARAM].getValue() > 0.f;
@@ -275,28 +291,36 @@ struct Ntrvlc : Module
 
 	float quantizeCv(float v)
 	{
-		int note;
-		float oct;
-		float fract = modff(v, &oct);
-		if (oct < 0.f || fract < 0.f)
+		return quantizeCv(v, nullptr, nullptr);
+	}
+
+	float quantizeCv(float v, int *note, int *oct)
+	{
+		int n = 0;
+		float o = 0;
+		float fract = modff(v, &o);
+		if (o < 0.f || fract < 0.f)
 		{
 			if (abs(fract) < 1e-7)
 				fract = 0.f;
 			else
 			{
 				fract += 1.f;
-				oct -= 1.f;
+				o -= 1;
 			}
 		}
-		note = (int)(floor(num_notes * fract + 0.5f));
+		n = (int)(floor(num_notes * fract + 0.5f));
 
-		if (note == 12)
+		if (n == num_notes)
 		{
-			note = 0;
-			oct++;
+			n = 0;
+			o += 1;
 		}
 
-		return oct + scale[note];
+		if(note) *note = scale[n];
+		if(oct) *oct = (int)o + 4;
+
+		return o + scale[n] / 12.f;
 	}
 
 	void updateLights()
@@ -313,6 +337,60 @@ struct Ntrvlc : Module
 				lights[ROW1_LIGHT + i * 8 + j].setBrightness(brightness);
 			}
 		}
+	}
+};
+
+struct NtrvlcNoteWidget : rack::TransparentWidget
+{
+	Ntrvlc *module;
+	std::shared_ptr<rack::Font> font;
+	char str[4];
+	static constexpr const char *notes = "CCDDEFFGGAAB";
+	static constexpr const char *sharps = " # #  # # # ";
+
+	NtrvlcNoteWidget(rack::Vec pos, rack::Vec size, Ntrvlc *module)
+	{
+		box.size = size;
+		box.pos = pos.minus(size.div(2));
+		this->module = module;
+		this->font = APP->window->loadFont(asset::plugin(pluginInstance, "res/fonts/ninepin.regular.ttf"));
+	}
+
+	void getString()
+	{
+		if (this->module != NULL)
+		{
+			int note = this->module->led_note;
+			int octave = this->module->led_oct;
+
+			if (this->module->num_notes == 0 || this->module->led_timer <= 0)
+				snprintf(str, sizeof(str), "   ");
+			else if (octave > 9)
+				snprintf(str, sizeof(str), "+++");
+			else if (octave < 0)
+				snprintf(str, sizeof(str), "---");
+			else
+				snprintf(str, sizeof(str), "%c%c%d", notes[note], sharps[note], octave);
+		}
+		else
+		{
+			snprintf(str, sizeof(str), " =)");
+		}
+	}
+
+	void draw(const DrawArgs &args) override
+	{
+		NVGcolor textColor = nvgRGB(0x78, 0xD8, 0xC8);
+
+		nvgFontSize(args.vg, 12);
+		nvgFontFaceId(args.vg, this->font->handle);
+		nvgTextLetterSpacing(args.vg, 1);
+		nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
+
+		Vec textPos = Vec(box.size.x - 6, 18);
+		nvgFillColor(args.vg, textColor);
+		getString();
+		nvgText(args.vg, textPos.x, textPos.y, str, NULL);
 	}
 };
 
@@ -368,6 +446,7 @@ struct NtrvlcWidget : ModuleWidget
 			addChild(createLight<SmallLight<CustomGreenLight>>(Vec(portX[i + 1] - 3, 222), module, Ntrvlc::ROW3_LIGHT + i));
 			addChild(createLight<SmallLight<CustomGreenLight>>(Vec(portX[i + 1] - 3, 282), module, Ntrvlc::ROW4_LIGHT + i));
 		}
+		addChild(new NtrvlcNoteWidget(Vec(310, 80), Vec(39, 27), module));
 	}
 
 	void appendContextMenu(Menu *menu) override
