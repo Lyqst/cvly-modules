@@ -184,12 +184,12 @@ struct Crcl : Module
 
         for (int i = 0; i < 3; i++)
         {
-            lights[MODE_LIGHT + i].setBrightness(mode == i ? 0.7f : 0);
+            lights[MODE_LIGHT + i].setBrightness(mode == i ? 1.f : 0);
         }
 
         for (int i = 0; i < 12; i++)
         {
-            lights[CIRCLE_LIGHT + i].setBrightness(light_bool[i] ? 0.7f : 0);
+            lights[CIRCLE_LIGHT + i].setBrightness(light_bool[i] ? 1.f : 0);
         }
 
         for (int i = 0; i < channels; i++)
