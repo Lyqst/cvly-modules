@@ -37,9 +37,9 @@
      showgrid="false"
      showguides="false"
      inkscape:guide-bbox="true"
-     inkscape:zoom="2.1971897"
-     inkscape:cx="145.19395"
-     inkscape:cy="275.71973"
+     inkscape:zoom="1.0985949"
+     inkscape:cx="192.06211"
+     inkscape:cy="312.34321"
      inkscape:window-width="1856"
      inkscape:window-height="1057"
      inkscape:window-x="56"
@@ -172,7 +172,7 @@
        x="0"
        y="-1.7763568e-15" />
     <rect
-       style="fill:#616061;fill-opacity:1;stroke-width:0.348765;stroke:#78d8c8;stroke-opacity:1"
+       style="fill:#616061;fill-opacity:1;stroke:#78d8c8;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect40273"
        width="14.980062"
        height="76.091553"

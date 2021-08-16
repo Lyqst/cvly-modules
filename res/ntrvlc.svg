@@ -7,9 +7,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="142.24001mm"
+   width="50.799999mm"
    height="128.5mm"
-   viewBox="0 0 142.24 128.5"
+   viewBox="0 0 50.799997 128.5"
    version="1.1"
    id="svg5"
    inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"
@@ -22,6 +22,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -38,8 +39,8 @@
      showguides="false"
      inkscape:guide-bbox="true"
      inkscape:zoom="1.5536477"
-     inkscape:cx="294.27355"
-     inkscape:cy="224.76783"
+     inkscape:cx="312.5026"
+     inkscape:cy="253.81661"
      inkscape:window-width="1856"
      inkscape:window-height="1057"
      inkscape:window-x="56"
@@ -102,7 +103,7 @@
        x="0.44038391"
        y="0.44038531" />
     <rect
-       style="fill:#616061;fill-opacity:1;stroke-width:0.412071;stroke:#78d8c8;stroke-opacity:1"
+       style="fill:#616061;fill-opacity:1;stroke:#78d8c8;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect40273"
        width="14.980062"
        height="106.22254"
@@ -431,7 +432,7 @@
        id="g13980"
        transform="translate(-3.2380527)">
       <rect
-         style="opacity:0.992;fill:#161516;fill-opacity:1;stroke:#78d8c8;stroke-width:0.162155;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
+         style="opacity:0.992;fill:#161516;fill-opacity:1;stroke:#78d8c8;stroke-width:0.26458333;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
          id="rect6247-1"
          width="10.950708"
          height="5.8593249"

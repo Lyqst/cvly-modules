@@ -47,7 +47,7 @@
      inkscape:window-x="56"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer3"
+     inkscape:current-layer="layer1"
      inkscape:document-rotation="0" />
   <defs
      id="defs2126">
@@ -72,7 +72,7 @@
        x="-2.220446e-15"
        y="5.3290705e-15" />
     <rect
-       style="fill:#616061;fill-opacity:1;stroke:#78d8c8;stroke-width:0.453758;stroke-opacity:1"
+       style="fill:#616061;fill-opacity:1;stroke:#78d8c8;stroke-width:0.26458333;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        id="rect79966"
        width="17.821413"
        height="17.749001"
