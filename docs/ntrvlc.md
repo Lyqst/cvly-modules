@@ -23,6 +23,4 @@ The expander adds two controls over the stacking function: weight and snap.
 
 OUT<sub>n</sub> = ((CV<sub>n-1</sub> * weight) + CV<sub>n</sub>) / (1 + weight)
 
-It also adds 4 triggers, one for each sequence, that fire whenever the output of its sequence changes.
-
-Option to turn first trigger output to poly in the context menu.
+It also adds 4 triggers, one for each sequence, that fire whenever the output of its sequence changes. Option to turn first output to poly in the context menu.
