@@ -15,3 +15,5 @@ extern Model* modelNtrvlc;
 extern Model* modelNtrvlx;
 extern Model* modelSpc;
 extern Model* modelStpr;
+extern Model* modelTxt;
+extern Model* modelWhl;
