@@ -112,7 +112,8 @@ struct Spc : Module
 
                 for (int i = 0; i < channels; i++)
                 {
-                    float fract = modff(temp_cv[i], nullptr);
+                    float iPtr;
+                    float fract = modff(temp_cv[i], &iPtr);
 
                     if (fract < 0)
                         fract = (abs(fract) < 1e-7) ? 0.f : fract + 1.f;

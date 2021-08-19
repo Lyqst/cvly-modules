@@ -93,7 +93,8 @@ struct Bss : Module
 
                     for (int i = 0; i < channels; i++)
                     {
-                        float fract = modff(cv[i], nullptr);
+                        float iPtr;
+                        float fract = modff(cv[i], &iPtr);
 
                         if (fract < 0)
                             fract = (abs(fract) < 1e-7) ? 0.f : fract + 1.f;
@@ -133,7 +134,8 @@ struct Bss : Module
                             lowest = cv[i];
                     }
 
-                    float fract = modff(lowest, nullptr);
+                    float iPtr;
+                    float fract = modff(lowest, &iPtr);
 
                     if (fract < 0)
                         fract = (abs(fract) < 1e-7) ? 0.f : fract + 1.f;
@@ -144,7 +146,9 @@ struct Bss : Module
                 { // random
                     float rand = random::uniform();
                     int n = floor(rand * channels);
-                    float fract = modff(cv[n], nullptr);
+
+                    float iPtr;
+                    float fract = modff(cv[n], &iPtr);
 
                     if (fract < 0)
                         fract = (abs(fract) < 1e-7) ? 0.f : fract + 1.f;
