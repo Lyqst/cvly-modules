@@ -4,8 +4,10 @@
 VCV Rack modules created by Benja Appel (aka Lyqst) :whale2: 
 ***
 ### Modules
+* [bss](https://github.com/Lyqst/cvly-modules/blob/master/docs/bss.md#bss)
 * [crcl](https://github.com/Lyqst/cvly-modules/blob/master/docs/crcl.md#crcl)
 * [ntrvlc](https://github.com/Lyqst/cvly-modules/blob/master/docs/ntrvlc.md#ntrvlc)
+* [spc](https://github.com/Lyqst/cvly-modules/blob/master/docs/spc.md#spc)
 * [stpr](https://github.com/Lyqst/cvly-modules/blob/master/docs/stpr.md#stpr)
 ***
 ### Cool stuff:
