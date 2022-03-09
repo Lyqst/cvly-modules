@@ -7,10 +7,11 @@
    viewBox="0 0 5.8208329 5.8208335"
    version="1.1"
    id="svg5"
-   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
    sodipodi:docname="buttonM0.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
@@ -24,13 +25,13 @@
      inkscape:document-units="mm"
      showgrid="false"
      units="px"
-     inkscape:zoom="16"
-     inkscape:cx="17.96875"
-     inkscape:cy="12.15625"
-     inkscape:window-width="1856"
-     inkscape:window-height="1057"
-     inkscape:window-x="56"
-     inkscape:window-y="-8"
+     inkscape:zoom="32"
+     inkscape:cx="13.453125"
+     inkscape:cy="12.421875"
+     inkscape:window-width="1920"
+     inkscape:window-height="1050"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
      width="22px">
@@ -39,13 +40,35 @@
        id="grid846" />
   </sodipodi:namedview>
   <defs
-     id="defs2" />
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient1113">
+      <stop
+         style="stop-color:#e0ede6;stop-opacity:1"
+         offset="0"
+         id="stop1109" />
+      <stop
+         style="stop-color:#100c11;stop-opacity:1"
+         offset="1"
+         id="stop1111" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1113"
+       id="linearGradient1115"
+       x1="0.42273262"
+       y1="0.38731265"
+       x2="5.4170146"
+       y2="5.4247146"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
     <ellipse
-       style="fill:#616061;fill-opacity:1;stroke:#989998;stroke-width:0.262868;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       style="fill:url(#linearGradient1115);fill-opacity:1;stroke:#e0ede6;stroke-width:0.26286799;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
        id="path848"
        cx="2.9104166"
        cy="2.9104166"

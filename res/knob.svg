@@ -7,7 +7,7 @@
    viewBox="0 0 7.4083328 7.4083336"
    version="1.1"
    id="svg5"
-   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
    sodipodi:docname="knob.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -24,13 +24,13 @@
      inkscape:document-units="mm"
      showgrid="false"
      units="px"
-     inkscape:zoom="16"
-     inkscape:cx="7.40625"
-     inkscape:cy="13.84375"
-     inkscape:window-width="1856"
-     inkscape:window-height="1057"
-     inkscape:window-x="56"
-     inkscape:window-y="-8"
+     inkscape:zoom="11.313709"
+     inkscape:cx="9.6785236"
+     inkscape:cy="9.5901353"
+     inkscape:window-width="1920"
+     inkscape:window-height="1050"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
      width="28px">
@@ -45,19 +45,20 @@
      inkscape:groupmode="layer"
      id="layer1">
     <circle
-       style="fill:#989998;fill-opacity:1;stroke:none;stroke-width:1.168;stroke-opacity:1"
+       style="fill:#e0ede6;fill-opacity:1;stroke:none;stroke-width:1.168;stroke-opacity:1"
        id="path848"
        cx="3.7041667"
        cy="3.7041667"
        r="3.5718751" />
-    <circle
-       style="fill:#78d8c8;fill-opacity:1;stroke:#616061;stroke-width:0.52916667;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+    <ellipse
+       style="fill:#25232d;fill-opacity:1;stroke:#64f6ed;stroke-width:0.529167;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path1036"
        cx="3.7041667"
        cy="3.7041667"
-       r="2.9104166" />
+       rx="2.9100001"
+       ry="2.9104166" />
     <path
-       style="fill:none;stroke:#616061;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#64f6ed;stroke:#64f6ed;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 3.7041667,1.172206 V 2.2898174 Z"
        id="path1630" />
   </g>

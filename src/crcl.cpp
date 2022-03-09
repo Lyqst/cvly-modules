@@ -72,6 +72,26 @@ struct Crcl : Module
     Crcl()
     {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configButton(MODE_PARAM, "Mode");
+        getParamQuantity(MODE_PARAM)->randomizeEnabled = false;
+        configSwitch(CIRCLE_PARAM, 0, 1, 0, "Root", {"Inactive, Active"});
+        configSwitch(CIRCLE_PARAM + 1, 0, 1, 0, "Perfect Fifth", {"Inactive, Active"});
+        configSwitch(CIRCLE_PARAM + 2, 0, 1, 0, "Mayor Second", {"Inactive, Active"});
+        configSwitch(CIRCLE_PARAM + 3, 0, 1, 0, "Mayor Sixth", {"Inactive, Active"});
+        configSwitch(CIRCLE_PARAM + 4, 0, 1, 0, "Mayor Third", {"Inactive, Active"});
+        configSwitch(CIRCLE_PARAM + 5, 0, 1, 0, "Mayor Seventh", {"Inactive, Active"});
+        configSwitch(CIRCLE_PARAM + 6, 0, 1, 0, "Tritone", {"Inactive, Active"});
+        configSwitch(CIRCLE_PARAM + 7, 0, 1, 0, "Minor Second", {"Inactive, Active"});
+        configSwitch(CIRCLE_PARAM + 8, 0, 1, 0, "Minor Sixth", {"Inactive, Active"});
+        configSwitch(CIRCLE_PARAM + 9, 0, 1, 0, "Minor Third", {"Inactive, Active"});
+        configSwitch(CIRCLE_PARAM + 10, 0, 1, 0, "Minor Seventh", {"Inactive, Active"});
+        configSwitch(CIRCLE_PARAM + 11, 0, 1, 0, "Perfect Fourth", {"Inactive, Active"});
+        configInput(CV_INPUT, "CV");
+        configInput(TRIGGER_INPUT, "Trigger");
+        configInput(RESET_INPUT, "Reset");
+        configInput(ROOT_INPUT, "Root");
+        configOutput(CV_OUTPUT, "CV");
+        configOutput(TRIGGER_OUTPUT, "Trigger");
     }
 
     void process(const ProcessArgs &args) override
@@ -225,7 +245,7 @@ struct CrclWidget : ModuleWidget
         addInput(createInputCentered<CustomPort>(Vec(28, 90), module, Crcl::TRIGGER_INPUT));
         addInput(createInputCentered<CustomPort>(Vec(28, 142), module, Crcl::RESET_INPUT));
 
-        addParam(createParamCentered<MediumButtonNoRandom>(Vec(150, 37), module, Crcl::MODE_PARAM));
+        addParam(createParamCentered<MediumButton>(Vec(150, 37), module, Crcl::MODE_PARAM));
         addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(130, 57), module, Crcl::MODE_LIGHT));
         addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(130, 68), module, Crcl::MODE_LIGHT + 1));
         addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(130, 79), module, Crcl::MODE_LIGHT + 2));
@@ -239,7 +259,7 @@ struct CrclWidget : ModuleWidget
         float r2 = 109;
         for (int i = 0; i < 12; i++)
         {
-            addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(center.x + r * sin(M_PI * i / 6), center.y - r * cos(M_PI * i / 6)), module, Crcl::CIRCLE_PARAM + i));
+            addParam(createParamCentered<MediumSwitchButton>(Vec(center.x + r * sin(M_PI * i / 6), center.y - r * cos(M_PI * i / 6)), module, Crcl::CIRCLE_PARAM + i));
             addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(center.x + r2 * sin(M_PI * i / 6), center.y - r2 * cos(M_PI * i / 6)), module, Crcl::CIRCLE_LIGHT + i));
         }
     }

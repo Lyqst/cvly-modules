@@ -52,8 +52,11 @@ struct Ntrvlx : Module
     {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
         configParam(WEIGHT_PARAM, 0.f, 1.f, 1.f, "Stacking weight");
-        configParam(SNAP_PARAM, 0, 1, 0, "Snap stacking");
-
+        configSwitch(SNAP_PARAM, 0, 1, 0, "Snap stacking", {"Off", "On"});
+        for (int i = 0; i < 4; i++)
+        {
+            configOutput(TRIGGER_OUTPUT + i, "Seq " + std::to_string(i + 1) + " trigger");
+        }
         leftExpander.producerMessage = leftMessages[0];
         leftExpander.consumerMessage = leftMessages[1];
     }

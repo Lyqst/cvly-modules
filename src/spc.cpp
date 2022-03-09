@@ -11,7 +11,8 @@ struct Spc : Module
     };
     enum InputIds
     {
-        POLY_INPUT,
+        CV_INPUT,
+        GATE_INPUT,
         NUM_INPUTS
     };
     enum OutputIds
@@ -28,6 +29,7 @@ struct Spc : Module
     int base_octave = 0;
     int min_interval = 0;
     float cv[16] = {};
+    bool open_gate[16];
     float notes_out[16] = {};
 
     bool sort = false;
@@ -56,95 +58,103 @@ struct Spc : Module
         configParam(DIST_PARAM, 0, 12, 0, "Min. interval", " semitones");
         configParam(OCT_PARAM, 0, 8, 4, "Octave", "");
         configParam(NOTE_PARAM, 0, 11, 0, "Note", "");
+        configInput(CV_INPUT, "CV");
+        configInput(GATE_INPUT, "Gate");
+        configOutput(POLY_OUTPUT, "Poly");
     }
 
     void process(const ProcessArgs &args) override
     {
 
-        int channels = inputs[POLY_INPUT].getChannels();
+        int channels = inputs[CV_INPUT].getChannels();
+        int open_gates = 0;
+        bool gated = inputs[GATE_INPUT].isConnected();
 
-        if (channels > 0)
+        bool update = false;
+        for (int i = 0; i < channels; i++)
         {
-            bool update = false;
-            for (int i = 0; i < channels; i++)
+            float in_cv = inputs[CV_INPUT].getVoltage(i);
+            bool gate = inputs[GATE_INPUT].getVoltage(i) > 0.0f;
+            if (gate || !gated)
             {
-                float in_cv = inputs[POLY_INPUT].getVoltage(i);
-                if (cv[i] != in_cv)
+                if (cv[open_gates] != in_cv)
                 {
-                    cv[i] = in_cv;
+                    cv[open_gates] = in_cv;
                     update = true;
                 }
+                open_gates++;
             }
+        }
+        channels = open_gates;
 
-            int note = params[NOTE_PARAM].getValue();
-            if (base_note != note)
+        int note = params[NOTE_PARAM].getValue();
+        if (base_note != note)
+        {
+            base_note = note;
+            update = true;
+        }
+
+        int octave = params[OCT_PARAM].getValue();
+        if (base_octave != octave)
+        {
+            base_octave = octave;
+            update = true;
+        }
+
+        int interval = params[DIST_PARAM].getValue();
+        if (min_interval != interval)
+        {
+            min_interval = interval;
+            update = true;
+        }
+
+        if (update)
+        {
+            float temp_cv[16] = {};
+
+            std::copy(cv, cv + 16, temp_cv);
+
+            if (sort)
             {
-                base_note = note;
-                update = true;
+                std::sort(temp_cv, temp_cv + channels);
             }
 
-            int octave = params[OCT_PARAM].getValue();
-            if (base_octave != octave)
-            {
-                base_octave = octave;
-                update = true;
-            }
-
-            int interval = params[DIST_PARAM].getValue();
-            if (min_interval != interval)
-            {
-                min_interval = interval;
-                update = true;
-            }
-
-            if (update)
-            {
-                float temp_cv[16] = {};
-
-                std::copy(cv, cv + 16, temp_cv);
-
-                if (sort)
-                {
-                    std::sort(temp_cv, temp_cv + channels);
-                }
-
-                int notes[16] = {0};
-
-                for (int i = 0; i < channels; i++)
-                {
-                    float iPtr;
-                    float fract = modff(temp_cv[i], &iPtr);
-
-                    if (fract < 0)
-                        fract = (abs(fract) < 1e-7) ? 0.f : fract + 1.f;
-
-                    notes[i] = (int)floor(fract * 12.f + 0.5f);
-
-                    if (notes[i] == 12)
-                        notes[i] = 0;
-                }
-
-                int oct = base_octave - 4;
-
-                if (notes[0] < base_note)
-                    oct++;
-
-                notes_out[0] = oct + (notes[0] / 12.f);
-
-                for (int i = 1; i < channels; i++)
-                {
-                    if (notes[i] - notes[i - 1] < min_interval)
-                        oct++;
-
-                    notes_out[i] = oct + (notes[i] / 12.f);
-                }
-            }
+            int notes[16] = {0};
 
             for (int i = 0; i < channels; i++)
-                outputs[POLY_OUTPUT].setVoltage(notes_out[i], i);
+            {
+                float iPtr;
+                float fract = modff(temp_cv[i], &iPtr);
 
-            outputs[POLY_OUTPUT].setChannels(channels);
+                if (fract < 0)
+                    fract = (abs(fract) < 1e-7) ? 0.f : fract + 1.f;
+
+                notes[i] = (int)floor(fract * 12.f + 0.5f);
+
+                if (notes[i] == 12)
+                    notes[i] = 0;
+            }
+
+            int oct = base_octave - 4;
+
+            if (notes[0] < base_note)
+                oct++;
+
+            notes_out[0] = oct + (notes[0] / 12.f);
+
+            for (int i = 1; i < channels; i++)
+            {
+                if (notes[i] - notes[i - 1] < min_interval)
+                    oct++;
+
+                notes_out[i] = oct + (notes[i] / 12.f);
+            }
         }
+
+        for (int i = 0; i < channels; i++)
+            outputs[POLY_OUTPUT].setVoltage(notes_out[i], i);
+
+        outputs[POLY_OUTPUT].setChannels(channels);
     }
 };
 
@@ -206,15 +216,16 @@ struct SpcWidget : ModuleWidget
 
         static const float xPos = RACK_GRID_WIDTH * 1.5;
 
-        addInput(createInputCentered<CustomPort>(Vec(xPos, 38), module, Spc::POLY_INPUT));
+        addInput(createInputCentered<CustomPort>(Vec(xPos, 38), module, Spc::CV_INPUT));
+        addInput(createInputCentered<CustomPort>(Vec(xPos, 73), module, Spc::GATE_INPUT));
 
-        addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(xPos, 80), module, Spc::DIST_PARAM));
+        addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(xPos, 115), module, Spc::DIST_PARAM));
 
-        addChild(new SpcNoteWidget(Vec(9, 137), Vec(39, 27), module));
-        addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(xPos, 169), module, Spc::OCT_PARAM));
-        addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(xPos, 205), module, Spc::NOTE_PARAM));
+        addChild(new SpcNoteWidget(Vec(9, 190), Vec(39, 27), module));
+        addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(xPos, 216), module, Spc::OCT_PARAM));
+        addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(xPos, 248), module, Spc::NOTE_PARAM));
 
-        addOutput(createOutputCentered<CustomPortOut>(Vec(xPos, 285), module, Spc::POLY_OUTPUT));
+        addOutput(createOutputCentered<CustomPortOut>(Vec(xPos, 298), module, Spc::POLY_OUTPUT));
     }
 
     void appendContextMenu(Menu *menu) override

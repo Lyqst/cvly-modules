@@ -11,7 +11,8 @@ struct Bss : Module
     };
     enum InputIds
     {
-        POLY_INPUT,
+        CV_INPUT,
+        GATE_INPUT,
         NUM_INPUTS
     };
     enum OutputIds
@@ -28,9 +29,13 @@ struct Bss : Module
     Bss()
     {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-        configParam(MODE_PARAM, 0, 1, 0, "Mode", "");
+        configButton(MODE_PARAM, "Mode");
         configParam(OCT_PARAM, 0, 8, 4, "Octave", "");
         configParam(NOTE_PARAM, 0, 11, 0, "Note", "");
+        getParamQuantity(MODE_PARAM)->randomizeEnabled = false;
+        configInput(CV_INPUT, "CV");
+        configInput(GATE_INPUT, "Gate");
+        configOutput(CV_OUTPUT, "CV");
     }
 
     dsp::SchmittTrigger inputTrigger;
@@ -38,6 +43,7 @@ struct Bss : Module
     int mode = 0;
     int note = 0;
     int octave = 0;
+    int min_polyphony = 1;
 
     json_t *dataToJson() override
     {
@@ -45,6 +51,9 @@ struct Bss : Module
 
         // mode
         json_object_set_new(rootJ, "mode", json_integer(mode));
+
+        // min_polyphony
+        json_object_set_new(rootJ, "min_polyphony", json_integer(min_polyphony));
 
         return rootJ;
     }
@@ -55,9 +64,15 @@ struct Bss : Module
         json_t *modeJ = json_object_get(rootJ, "mode");
         if (modeJ)
             mode = json_integer_value(modeJ);
+
+        // min_polyphony
+        json_t *polyJ = json_object_get(rootJ, "min_polyphony");
+        if (polyJ)
+            min_polyphony = json_integer_value(polyJ);
     }
 
     float cv[16] = {};
+    bool gates[16] = {false};
     int note_out = 0;
     int scoreMapping[12] = {0, 12, 6, 2, 2, 12, 6, 0, 12, 12, 4, 4};
 
@@ -70,91 +85,100 @@ struct Bss : Module
                 mode = 0;
         }
 
-        int channels = inputs[POLY_INPUT].getChannels();
+        int channels = inputs[CV_INPUT].getChannels();
+        int open_gates = 0;
+        bool gated = inputs[GATE_INPUT].isConnected();
 
-        if (channels > 0)
+        bool update = false;
+        for (int i = 0; i < channels; i++)
         {
-            bool update = false;
-            for (int i = 0; i < channels; i++)
+            float in_cv = inputs[CV_INPUT].getVoltage(i);
+            bool gate = gated && inputs[GATE_INPUT].getVoltage(i) > 0.0f;
+
+            if (gate != gates[i])
+                update = true;
+
+            if (gate || !gated)
             {
-                float in_cv = inputs[POLY_INPUT].getVoltage(i);
-                if (cv[i] != in_cv)
+                if (cv[open_gates] != in_cv)
                 {
-                    cv[i] = in_cv;
+                    cv[open_gates] = in_cv;
                     update = true;
+                }
+                open_gates++;
+            }
+        }
+        channels = open_gates;
+
+        if (update && channels >= min_polyphony)
+        {
+            if (mode == 0) // harmonic
+            {
+                int notes[16] = {0};
+
+                for (int i = 0; i < channels; i++)
+                {
+                    float iPtr;
+                    float fract = modff(cv[i], &iPtr);
+
+                    if (fract < 0)
+                        fract = (abs(fract) < 1e-7) ? 0.f : fract + 1.f;
+
+                    notes[i] = (int)floor(fract * 12.f + 0.5f);
+
+                    if (notes[i] == 12)
+                        notes[i] = 0;
+                }
+
+                int min = 9999;
+                for (int i = 0; i < channels; i++)
+                {
+                    int sum = 0;
+                    for (int j = 0; j < channels; j++)
+                    {
+                        int diff = notes[j] - notes[i];
+                        if (diff < 0)
+                            diff += 12;
+                        sum += scoreMapping[diff];
+                    }
+                    if (sum < min)
+                    {
+                        min = sum;
+                        note_out = notes[i];
+                    }
                 }
             }
 
-            if (update)
+            else if (mode == 1) // lowest
             {
-                if (mode == 0) // harmonic
+                float lowest = 99;
+
+                for (int i = 0; i < channels; i++)
                 {
-                    int notes[16] = {0};
-
-                    for (int i = 0; i < channels; i++)
-                    {
-                        float iPtr;
-                        float fract = modff(cv[i], &iPtr);
-
-                        if (fract < 0)
-                            fract = (abs(fract) < 1e-7) ? 0.f : fract + 1.f;
-
-                        notes[i] = (int)floor(fract * 12.f + 0.5f);
-
-                        if (notes[i] == 12)
-                            notes[i] = 0;
-                    }
-
-                    int min = 9999;
-                    for (int i = 0; i < channels; i++)
-                    {
-                        int sum = 0;
-                        for (int j = 0; j < channels; j++)
-                        {
-                            int diff = notes[j] - notes[i];
-                            if (diff < 0)
-                                diff += 12;
-                            sum += scoreMapping[diff];
-                        }
-                        if (sum < min)
-                        {
-                            min = sum;
-                            note_out = notes[i];
-                        }
-                    }
+                    if (cv[i] < lowest)
+                        lowest = cv[i];
                 }
 
-                else if (mode == 1) // lowest
-                {
-                    float lowest = 99;
+                float iPtr;
+                float fract = modff(lowest, &iPtr);
 
-                    for (int i = 0; i < channels; i++)
-                    {
-                        if (cv[i] < lowest)
-                            lowest = cv[i];
-                    }
+                if (fract < 0)
+                    fract = (abs(fract) < 1e-7) ? 0.f : fract + 1.f;
 
-                    float iPtr;
-                    float fract = modff(lowest, &iPtr);
+                note_out = (int)floor(fract * 12.f + 0.5f);
+            }
+            else
+            { // random
+                float rand = random::uniform();
+                int n = floor(rand * channels);
 
-                    if (fract < 0)
-                        fract = (abs(fract) < 1e-7) ? 0.f : fract + 1.f;
+                float iPtr;
+                float fract = modff(cv[n], &iPtr);
 
-                    note_out = (int)floor(fract * 12.f + 0.5f);
-                }
-                else
-                { // random
-                    float rand = random::uniform();
-                    int n = floor(rand * channels);
+                if (fract < 0)
+                    fract = (abs(fract) < 1e-7) ? 0.f : fract + 1.f;
 
-                    float iPtr;
-                    float fract = modff(cv[n], &iPtr);
-
-                    if (fract < 0)
-                        fract = (abs(fract) < 1e-7) ? 0.f : fract + 1.f;
-
-                    note_out = (int)floor(fract * 12.f + 0.5f);
-                }
+                note_out = (int)floor(fract * 12.f + 0.5f);
             }
         }
 
@@ -203,19 +227,53 @@ struct BssNoteWidget : rack::TransparentWidget
         }
     }
 
-    void draw(const DrawArgs &args) override
+    void drawLayer(const DrawArgs &args, int layer) override
     {
-        NVGcolor textColor = nvgRGB(0x78, 0xD8, 0xC8);
+        if (layer == 1)
+        {
+            NVGcolor textColor = nvgRGB(0x78, 0xD8, 0xC8);
 
-        nvgFontSize(args.vg, 12);
-        nvgFontFaceId(args.vg, this->font->handle);
-        nvgTextLetterSpacing(args.vg, 1);
-        nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
+            nvgFontSize(args.vg, 12);
+            nvgFontFaceId(args.vg, this->font->handle);
+            nvgTextLetterSpacing(args.vg, 1);
+            nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
 
-        Vec textPos = Vec(box.size.x - 6, 18);
-        nvgFillColor(args.vg, textColor);
-        getString();
-        nvgText(args.vg, textPos.x, textPos.y, str, NULL);
+            Vec textPos = Vec(box.size.x - 6, 18);
+            nvgFillColor(args.vg, textColor);
+            getString();
+            nvgText(args.vg, textPos.x, textPos.y, str, NULL);
+        }
+
+        Widget::drawLayer(args, layer);
+    }
+};
+
+struct BssPolyValueItem : MenuItem
+{
+    Bss *module;
+    int poly;
+    void onAction(const event::Action &e) override
+    {
+        module->min_polyphony = poly;
+    }
+};
+
+struct BssPolyItem : MenuItem
+{
+    Bss *module;
+    Menu *createChildMenu() override
+    {
+        Menu *menu = new Menu;
+        for (int poly = 1; poly <= 16; poly++)
+        {
+            BssPolyValueItem *item = new BssPolyValueItem;
+            item->text = std::to_string(poly);
+            item->rightText = CHECKMARK(module->min_polyphony == poly);
+            item->module = module;
+            item->poly = poly;
+            menu->addChild(item);
+        }
+        return menu;
     }
 };
 
@@ -231,18 +289,32 @@ struct BssWidget : ModuleWidget
 
         static const float xPos = RACK_GRID_WIDTH * 1.5;
 
-        addInput(createInputCentered<CustomPort>(Vec(xPos, 38), module, Bss::POLY_INPUT));
+        addInput(createInputCentered<CustomPort>(Vec(xPos, 33), module, Bss::CV_INPUT));
+        addInput(createInputCentered<CustomPort>(Vec(xPos, 73), module, Bss::GATE_INPUT));
 
-        addParam(createParamCentered<MediumButtonNoRandom>(Vec(xPos, 80), module, Bss::MODE_PARAM));
-        addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(xPos - 15, 98), module, Bss::MODE_LIGHT));
-        addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(xPos - 15, 109), module, Bss::MODE_LIGHT + 1));
-        addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(xPos - 15, 120), module, Bss::MODE_LIGHT + 2));
+        addParam(createParamCentered<MediumButton>(Vec(xPos, 113), module, Bss::MODE_PARAM));
+        addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(xPos - 15, 130), module, Bss::MODE_LIGHT));
+        addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(xPos - 15, 141), module, Bss::MODE_LIGHT + 1));
+        addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(xPos - 15, 152), module, Bss::MODE_LIGHT + 2));
 
-        addChild(new BssNoteWidget(Vec(9, 161), Vec(39, 27), module));
-        addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(xPos, 192), module, Bss::OCT_PARAM));
-        addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(xPos, 228), module, Bss::NOTE_PARAM));
+        addChild(new BssNoteWidget(Vec(9, 190), Vec(39, 27), module));
+        addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(xPos, 216), module, Bss::OCT_PARAM));
+        addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(xPos, 248), module, Bss::NOTE_PARAM));
 
-        addOutput(createOutputCentered<CustomPortOut>(Vec(xPos, 285), module, Bss::CV_OUTPUT));
+        addOutput(createOutputCentered<CustomPortOut>(Vec(xPos, 298), module, Bss::CV_OUTPUT));
+    }
+
+    void appendContextMenu(Menu *menu) override
+    {
+        Bss *bss = dynamic_cast<Bss *>(module);
+        MenuLabel *spacerLabel = new MenuLabel();
+        menu->addChild(spacerLabel);
+
+        BssPolyItem *polyItem = new BssPolyItem;
+        polyItem->text = "Minimum polyphony";
+        polyItem->rightText = std::to_string(bss->min_polyphony) + " " + RIGHT_ARROW;
+        polyItem->module = bss;
+        menu->addChild(polyItem);
     }
 };
 

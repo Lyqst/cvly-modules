@@ -3,29 +3,24 @@
 
 struct Txt : Module
 {
-    int currModule;
+    std::string slug;
+    std::string text;
+    bool dirty = false;
 
     Txt()
     {
         config(0, 0, 0, 0);
     }
 
-    void process(const ProcessArgs &args) override
+    void step() override
     {
         Module *module = leftExpander.module;
 
-        currModule = manuals::NONE;
-
-        if (module)
+        if ((module && module->model->slug != slug) || !module)
         {
-            for (int i = 1; i < manuals::NUM_MODULES; i++)
-            {
-                if (module->model->slug == manuals::slugs[i])
-                {
-                    currModule = i;
-                    break;
-                }
-            }
+            slug = module ? module->model->slug : "";
+            text = manuals::text[slug];
+            dirty = true;
         }
     }
 };
@@ -33,56 +28,42 @@ struct Txt : Module
 struct TxtDisplayWidget : rack::LedDisplayTextField
 {
     Txt *module;
-    int currModule;
-    TxtDisplayWidget(rack::Vec pos, rack::Vec size, Txt *module)
-    {
-        box.size = size;
-        box.pos = pos;
-        this->multiline = true;
-        this->color = nvgRGB(0x78, 0xD8, 0xC8);
-        this->module = module;
-    }
 
-    void onSelectText(const event::SelectText &e) override
+    void step() override
     {
-        e.stopPropagating();
-    }
+        TextField::cursor = 0;
+        TextField::selection = 0;
+        TextField::step();
 
-    void onSelectKey(const event::SelectKey &e) override
-    {
-        e.stopPropagating();
-    }
-
-    void draw(const DrawArgs &args) override
-    {
-        if (module != NULL)
+        if (module && module->dirty)
         {
-            if (currModule != module->currModule)
-            {
-                currModule = module->currModule;
-                setText(manuals::text[currModule]);
-            }
+            setText(module->text);
+            module->dirty = false;
         }
-        else
-            setText("cvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules");
-
-        LedDisplayTextField::draw(args);
     }
 };
 
 struct TxtWidget : ModuleWidget
 {
+    TxtDisplayWidget *txtDisplay;
+
     TxtWidget(Txt *module)
     {
         setModule(module);
-        setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/txt.svg")));
+        setPanel(Svg::load(asset::plugin(pluginInstance, "res/txt.svg")));
 
         addChild(createWidget<CustomScrew>(Vec(RACK_GRID_WIDTH, 0)));
         addChild(createWidget<CustomScrew>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
         addChild(createWidget<CustomScrew>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
         addChild(createWidget<CustomScrew>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-        addChild(new TxtDisplayWidget(Vec(10, 25), Vec(220, 305), module));
+        txtDisplay = createWidget<TxtDisplayWidget>(Vec(8, 16));
+        txtDisplay->box.size = Vec(224, 310);
+        txtDisplay->multiline = true;
+        txtDisplay->color = nvgRGB(100, 246, 237);
+        txtDisplay->setText("cvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules\ncvly modules");
+        txtDisplay->module = dynamic_cast<Txt *>(module);
+        addChild(txtDisplay);
     }
 };
 

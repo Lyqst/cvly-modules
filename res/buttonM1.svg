@@ -7,10 +7,11 @@
    viewBox="0 0 5.8208329 5.8208335"
    version="1.1"
    id="svg5"
-   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
    sodipodi:docname="buttonM1.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
@@ -26,11 +27,11 @@
      units="px"
      inkscape:zoom="12.429181"
      inkscape:cx="0.52296286"
-     inkscape:cy="19.108258"
-     inkscape:window-width="1856"
-     inkscape:window-height="1057"
-     inkscape:window-x="56"
-     inkscape:window-y="-8"
+     inkscape:cy="19.027802"
+     inkscape:window-width="1920"
+     inkscape:window-height="1050"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
      width="22px">
@@ -39,13 +40,35 @@
        id="grid846" />
   </sodipodi:namedview>
   <defs
-     id="defs2" />
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient15820">
+      <stop
+         style="stop-color:#64f6ed;stop-opacity:1"
+         offset="0"
+         id="stop15816" />
+      <stop
+         style="stop-color:#0aa0ab;stop-opacity:1"
+         offset="1"
+         id="stop15818" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient15820"
+       id="linearGradient15822"
+       x1="0.37322837"
+       y1="0.35157862"
+       x2="5.4198294"
+       y2="5.3823867"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
     <ellipse
-       style="fill:#78d8c8;fill-opacity:1;stroke:#989998;stroke-width:0.262868;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       style="fill:url(#linearGradient15822);fill-opacity:1;stroke:#e0ede6;stroke-width:0.262868;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
        id="path848"
        cx="2.9104166"
        cy="2.9104166"

@@ -32,8 +32,13 @@ struct Stpr : Module
 		for (int i = 0; i < 8; i++)
 		{
 			configParam(STEP_PARAM + i, -1.f, 1.f, 0, "Step " + std::to_string(i + 1), "");
-			configParam(STEP_ON_PARAM + i, 0, 1, 1, "Step " + std::to_string(i + 1) + " on", "");
+			configSwitch(STEP_ON_PARAM + i, 0, 1, 1, "Step " + std::to_string(i + 1) + " switch", {"Off", "On"});
+			getParamQuantity(STEP_ON_PARAM + i)->randomizeEnabled = false;
+			configInput(TRIGGER_INPUT + i, "Step " + std::to_string(i) + " trigger");
 		}
+		configInput(CLOCK_INPUT, "Clock");
+		configInput(RESET_INPUT, "Reset");
+		configOutput(CV_OUTPUT, "CV");
 	}
 
 	int curr_step = 0;
@@ -142,7 +147,7 @@ struct StprWidget : ModuleWidget
 		{
 			addChild(createLightCentered<SmallLight<CustomGreenLight>>(Vec(85, portY[i]), module, Stpr::STEP_LIGHT + i));
 			addParam(createParamCentered<CustomSmallKnob>(Vec(105, portY[i]), module, Stpr::STEP_PARAM + i));
-			addParam(createParamCentered<SmallSwitchButtonNoRandom>(Vec(132, portY[i]), module, Stpr::STEP_ON_PARAM + i));
+			addParam(createParamCentered<SmallSwitchButton>(Vec(132, portY[i]), module, Stpr::STEP_ON_PARAM + i));
 			addInput(createInputCentered<CustomPort>(Vec(152, portY[i]), module, Stpr::TRIGGER_INPUT + i));
 		}
 

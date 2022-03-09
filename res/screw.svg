@@ -7,7 +7,7 @@
    viewBox="0 0 5.0799998 5.0800002"
    version="1.1"
    id="svg1898"
-   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
    sodipodi:docname="screw.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -26,11 +26,11 @@
      units="mm"
      inkscape:zoom="12.101347"
      inkscape:cx="0.289224"
-     inkscape:cy="11.858184"
-     inkscape:window-width="1856"
-     inkscape:window-height="1057"
-     inkscape:window-x="56"
-     inkscape:window-y="-8"
+     inkscape:cy="11.816866"
+     inkscape:window-width="1920"
+     inkscape:window-height="1050"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <defs
@@ -40,17 +40,17 @@
      inkscape:groupmode="layer"
      id="layer1">
     <circle
-       style="fill:#78d8c8;fill-opacity:1;stroke-width:0.47661;stroke-linejoin:bevel;stroke-dasharray:3.81287, 1.90642"
+       style="fill:#e0ede6;fill-opacity:1;stroke-width:0.47661;stroke-linejoin:bevel;stroke-dasharray:3.81287, 1.90642"
        id="path2004"
        cx="2.54"
        cy="2.54"
        r="1.8520833" />
     <path
-       style="fill:none;stroke:#6ea096;stroke-width:0.493889;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#25232d;stroke:#25232d;stroke-width:0.493889;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 2.54,1.6377755 V 3.4422244 Z"
        id="path2256" />
     <path
-       style="fill:none;stroke:#6ea096;stroke-width:0.493889;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;stroke:#25232d;stroke-width:0.493889;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 1.6377755,2.54 H 3.4422244 Z"
        id="path2256-9" />
   </g>

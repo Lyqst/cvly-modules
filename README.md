@@ -1,7 +1,7 @@
 # cvly
 *Pronounced cee-vli*
 ***
-VCV Rack modules created by Benja Appel (aka Lyqst) :whale2: 
+VCV Rack modules created by Benja Appel (@Lyqst) :whale2: 
 ***
 ### Modules
 * [bss](https://github.com/Lyqst/cvly-modules/blob/master/docs/bss.md#bss)
@@ -9,6 +9,7 @@ VCV Rack modules created by Benja Appel (aka Lyqst) :whale2:
 * [ntrvlc](https://github.com/Lyqst/cvly-modules/blob/master/docs/ntrvlc.md#ntrvlc)
 * [spc](https://github.com/Lyqst/cvly-modules/blob/master/docs/spc.md#spc)
 * [stpr](https://github.com/Lyqst/cvly-modules/blob/master/docs/stpr.md#stpr)
+* [txt](https://github.com/Lyqst/cvly-modules/blob/master/docs/txt.md#txt)
 ***
 ### Cool stuff:
 * [CVLY sequencers in VCV Rack (Review | Tutorial) - VCV Rack Ideas](https://www.youtube.com/watch?v=5z5fJXOkQOM) 

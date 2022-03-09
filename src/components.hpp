@@ -82,86 +82,6 @@ struct MediumSwitchButton : SvgSwitch
 	}
 };
 
-struct CustomKnobNoRandom : SvgKnob
-{
-	CustomKnobNoRandom()
-	{
-		minAngle = -0.78 * M_PI;
-		maxAngle = 0.78 * M_PI;
-		setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/knob.svg")));
-	}
-
-	void randomize() override {}
-};
-
-struct CustomSmallKnobNoRandom : SvgKnob
-{
-	CustomSmallKnobNoRandom()
-	{
-		minAngle = -0.78 * M_PI;
-		maxAngle = 0.78 * M_PI;
-		setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/knobS.svg")));
-	}
-
-	void randomize() override {}
-};
-
-struct CustomSmallSwitchKnobNoRandom : SvgKnob
-{
-	CustomSmallSwitchKnobNoRandom()
-	{
-		minAngle = -0.78 * M_PI;
-		maxAngle = 0.78 * M_PI;
-		snap = true;
-		smooth = false;
-		setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/knobS.svg")));
-	}
-
-	void randomize() override {}
-};
-
-struct SmallSwitchButtonNoRandom : SvgSwitch
-{
-	SmallSwitchButtonNoRandom()
-	{
-		momentary = false;
-		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/buttonS0.svg")));
-		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/buttonS1.svg")));
-		fb->removeChild(shadow);
-		delete shadow;
-	}
-
-	void randomize() override {}
-};
-
-struct MediumButtonNoRandom : SvgSwitch
-{
-	MediumButtonNoRandom()
-	{
-		momentary = true;
-		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/buttonM0.svg")));
-		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/buttonM1.svg")));
-		fb->removeChild(shadow);
-		delete shadow;
-	}
-
-	void randomize() override {}
-};
-
-struct MediumSwitchButtonNoRandom : SvgSwitch
-{
-	MediumSwitchButtonNoRandom()
-	{
-		momentary = false;
-		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/buttonM0.svg")));
-		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/buttonM1.svg")));
-		fb->removeChild(shadow);
-		delete shadow;
-	}
-
-	void randomize() override {}
-};
-
 struct CustomPort : app::SvgPort
 {
 	CustomPort()
@@ -182,9 +102,9 @@ struct CustomGreenLight : ModuleLightWidget
 {
 	CustomGreenLight()
 	{
-		bgColor = nvgRGB(0x61, 0x60, 0x61);
-		borderColor = nvgRGB(0x1c, 0x1c, 0x21);
-		addBaseColor(nvgRGB(0x78, 0xD8, 0xC8));
+		bgColor = nvgRGB(16, 12, 17);
+		borderColor = nvgRGB(100, 246, 237);
+		addBaseColor(nvgRGB(224, 237, 230));
 	}
 };
 

@@ -47,6 +47,21 @@ struct Ntrvlc : Module
 		NUM_LIGHTS
 	};
 
+	std::list<ParamIds> NoRandomIds = {
+		STACK_PARAM,
+		QUANT1_PARAM,
+		QUANT2_PARAM,
+		QUANT3_PARAM,
+		QUANT4_PARAM,
+		QUANT5_PARAM,
+		QUANT6_PARAM,
+		QUANT7_PARAM,
+		QUANT8_PARAM,
+		QUANT9_PARAM,
+		QUANT10_PARAM,
+		QUANT11_PARAM,
+		QUANT12_PARAM};
+
 	float rightMessages[2][4] = {};
 
 	json_t *dataToJson() override
@@ -70,19 +85,19 @@ struct Ntrvlc : Module
 	Ntrvlc()
 	{
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-		configParam(STACK_PARAM, 0, 1, 1, "Stack intervals");
-		configParam(QUANT1_PARAM, 0.f, 1.f, 0.f, "C");
-		configParam(QUANT2_PARAM, 0.f, 1.f, 0.f, "C#");
-		configParam(QUANT3_PARAM, 0.f, 1.f, 0.f, "D");
-		configParam(QUANT4_PARAM, 0.f, 1.f, 0.f, "D#");
-		configParam(QUANT5_PARAM, 0.f, 1.f, 0.f, "E");
-		configParam(QUANT6_PARAM, 0.f, 1.f, 0.f, "F");
-		configParam(QUANT7_PARAM, 0.f, 1.f, 0.f, "F#");
-		configParam(QUANT8_PARAM, 0.f, 1.f, 0.f, "G");
-		configParam(QUANT9_PARAM, 0.f, 1.f, 0.f, "G#");
-		configParam(QUANT10_PARAM, 0.f, 1.f, 0.f, "A");
-		configParam(QUANT11_PARAM, 0.f, 1.f, 0.f, "A#");
-		configParam(QUANT12_PARAM, 0.f, 1.f, 0.f, "B");
+		configSwitch(STACK_PARAM, 0, 1, 1, "Stack intervals", {"Off", "On"});
+		configSwitch(QUANT1_PARAM, 0.f, 1.f, 0.f, "C", {"Off", "On"});
+		configSwitch(QUANT2_PARAM, 0.f, 1.f, 0.f, "C#", {"Off", "On"});
+		configSwitch(QUANT3_PARAM, 0.f, 1.f, 0.f, "D", {"Off", "On"});
+		configSwitch(QUANT4_PARAM, 0.f, 1.f, 0.f, "D#", {"Off", "On"});
+		configSwitch(QUANT5_PARAM, 0.f, 1.f, 0.f, "E", {"Off", "On"});
+		configSwitch(QUANT6_PARAM, 0.f, 1.f, 0.f, "F", {"Off", "On"});
+		configSwitch(QUANT7_PARAM, 0.f, 1.f, 0.f, "F#", {"Off", "On"});
+		configSwitch(QUANT8_PARAM, 0.f, 1.f, 0.f, "G", {"Off", "On"});
+		configSwitch(QUANT9_PARAM, 0.f, 1.f, 0.f, "G#", {"Off", "On"});
+		configSwitch(QUANT10_PARAM, 0.f, 1.f, 0.f, "A", {"Off", "On"});
+		configSwitch(QUANT11_PARAM, 0.f, 1.f, 0.f, "A#", {"Off", "On"});
+		configSwitch(QUANT12_PARAM, 0.f, 1.f, 0.f, "B", {"Off", "On"});
 		configParam(LENGTH_PARAM, 1, 8, 8, "Seq 1 length");
 		configParam(LENGTH_PARAM + 1, 1, 8, 8, "Seq 2 length");
 		configParam(LENGTH_PARAM + 2, 1, 8, 8, "Seq 3 length");
@@ -94,7 +109,17 @@ struct Ntrvlc : Module
 			configParam(ROW3_PARAM + i, -1.f, 1.f, 0, "Seq 3, Step " + std::to_string(i + 1), "");
 			configParam(ROW4_PARAM + i, -1.f, 1.f, 0, "Seq 4, Step " + std::to_string(i + 1), "");
 		}
-
+		for (const ParamIds &param : NoRandomIds)
+		{
+			getParamQuantity(param)->randomizeEnabled = false;
+		}
+		for (int i = 0; i < 4; i++)
+		{
+			configInput(CLOCK_INPUT + i, "Seq " + std::to_string(i + 1) + " clock");
+			configOutput(CV_OUTPUT + i, "Seq " + std::to_string(i + 1) + " CV");
+		}
+		configInput(RESET_INPUT, "Reset");
+		configOutput(POLY_OUTPUT, "Poly");
 		rightExpander.producerMessage = rightMessages[0];
 		rightExpander.consumerMessage = rightMessages[1];
 	}
@@ -317,8 +342,10 @@ struct Ntrvlc : Module
 			o += 1;
 		}
 
-		if(note) *note = scale[n];
-		if(oct) *oct = (int)o + 4;
+		if (note)
+			*note = scale[n];
+		if (oct)
+			*oct = (int)o + 4;
 
 		return o + scale[n] / 12.f;
 	}
@@ -343,22 +370,21 @@ struct Ntrvlc : Module
 struct NtrvlcNoteWidget : rack::TransparentWidget
 {
 	Ntrvlc *module;
-	std::shared_ptr<rack::Font> font;
 	char str[4];
 	static constexpr const char *notes = "CCDDEFFGGAAB";
 	static constexpr const char *sharps = " # #  # # # ";
+	const std::string fontPath = "res/fonts/ninepin.regular.ttf";
 
 	NtrvlcNoteWidget(rack::Vec pos, rack::Vec size, Ntrvlc *module)
 	{
 		box.size = size;
 		box.pos = pos.minus(size.div(2));
 		this->module = module;
-		this->font = APP->window->loadFont(asset::plugin(pluginInstance, "res/fonts/ninepin.regular.ttf"));
 	}
 
 	void getString()
 	{
-		if (this->module != NULL)
+		if (module)
 		{
 			int note = this->module->led_note;
 			int octave = this->module->led_oct;
@@ -380,17 +406,20 @@ struct NtrvlcNoteWidget : rack::TransparentWidget
 
 	void draw(const DrawArgs &args) override
 	{
-		NVGcolor textColor = nvgRGB(0x78, 0xD8, 0xC8);
+		std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, fontPath));
+		if (font)
+		{
+			nvgFontFaceId(args.vg, font->handle);
 
-		nvgFontSize(args.vg, 12);
-		nvgFontFaceId(args.vg, this->font->handle);
-		nvgTextLetterSpacing(args.vg, 1);
-		nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
+			nvgFontSize(args.vg, 12);
+			nvgTextLetterSpacing(args.vg, 1);
+			nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
 
-		Vec textPos = Vec(box.size.x - 6, 18);
-		nvgFillColor(args.vg, textColor);
-		getString();
-		nvgText(args.vg, textPos.x, textPos.y, str, NULL);
+			nvgFillColor(args.vg, nvgRGB(100, 246, 237));
+			getString();
+			Vec textPos = Vec(box.size.x - 6, 18);
+			nvgText(args.vg, textPos.x, textPos.y, str, NULL);
+		}
 	}
 };
 
@@ -406,23 +435,23 @@ struct NtrvlcWidget : ModuleWidget
 		addChild(createWidget<CustomScrew>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<CustomScrew>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(233, 48), module, Ntrvlc::STACK_PARAM));
-		addParam(createParamCentered<CustomSmallSwitchKnobNoRandom>(Vec(274, 48), module, Ntrvlc::LENGTH_PARAM));
-		addParam(createParamCentered<CustomSmallSwitchKnobNoRandom>(Vec(296, 48), module, Ntrvlc::LENGTH_PARAM + 1));
-		addParam(createParamCentered<CustomSmallSwitchKnobNoRandom>(Vec(318, 48), module, Ntrvlc::LENGTH_PARAM + 2));
-		addParam(createParamCentered<CustomSmallSwitchKnobNoRandom>(Vec(340, 48), module, Ntrvlc::LENGTH_PARAM + 3));
-		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(70, 65), module, Ntrvlc::QUANT1_PARAM));
-		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(80, 42), module, Ntrvlc::QUANT2_PARAM));
-		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(90, 65), module, Ntrvlc::QUANT3_PARAM));
-		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(100, 42), module, Ntrvlc::QUANT4_PARAM));
-		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(110, 65), module, Ntrvlc::QUANT5_PARAM));
-		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(130, 65), module, Ntrvlc::QUANT6_PARAM));
-		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(140, 42), module, Ntrvlc::QUANT7_PARAM));
-		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(150, 65), module, Ntrvlc::QUANT8_PARAM));
-		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(160, 42), module, Ntrvlc::QUANT9_PARAM));
-		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(170, 65), module, Ntrvlc::QUANT10_PARAM));
-		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(180, 42), module, Ntrvlc::QUANT11_PARAM));
-		addParam(createParamCentered<MediumSwitchButtonNoRandom>(Vec(190, 65), module, Ntrvlc::QUANT12_PARAM));
+		addParam(createParamCentered<MediumSwitchButton>(Vec(233, 48), module, Ntrvlc::STACK_PARAM));
+		addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(274, 48), module, Ntrvlc::LENGTH_PARAM));
+		addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(296, 48), module, Ntrvlc::LENGTH_PARAM + 1));
+		addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(318, 48), module, Ntrvlc::LENGTH_PARAM + 2));
+		addParam(createParamCentered<CustomSmallSwitchKnob>(Vec(340, 48), module, Ntrvlc::LENGTH_PARAM + 3));
+		addParam(createParamCentered<MediumSwitchButton>(Vec(70, 65), module, Ntrvlc::QUANT1_PARAM));
+		addParam(createParamCentered<MediumSwitchButton>(Vec(80, 42), module, Ntrvlc::QUANT2_PARAM));
+		addParam(createParamCentered<MediumSwitchButton>(Vec(90, 65), module, Ntrvlc::QUANT3_PARAM));
+		addParam(createParamCentered<MediumSwitchButton>(Vec(100, 42), module, Ntrvlc::QUANT4_PARAM));
+		addParam(createParamCentered<MediumSwitchButton>(Vec(110, 65), module, Ntrvlc::QUANT5_PARAM));
+		addParam(createParamCentered<MediumSwitchButton>(Vec(130, 65), module, Ntrvlc::QUANT6_PARAM));
+		addParam(createParamCentered<MediumSwitchButton>(Vec(140, 42), module, Ntrvlc::QUANT7_PARAM));
+		addParam(createParamCentered<MediumSwitchButton>(Vec(150, 65), module, Ntrvlc::QUANT8_PARAM));
+		addParam(createParamCentered<MediumSwitchButton>(Vec(160, 42), module, Ntrvlc::QUANT9_PARAM));
+		addParam(createParamCentered<MediumSwitchButton>(Vec(170, 65), module, Ntrvlc::QUANT10_PARAM));
+		addParam(createParamCentered<MediumSwitchButton>(Vec(180, 42), module, Ntrvlc::QUANT11_PARAM));
+		addParam(createParamCentered<MediumSwitchButton>(Vec(190, 65), module, Ntrvlc::QUANT12_PARAM));
 
 		static const float portX[10] = {30, 70, 109, 148, 187, 226, 265, 304, 343, 386};
 		addInput(createInputCentered<CustomPort>(Vec(30, 48), module, Ntrvlc::RESET_INPUT));
