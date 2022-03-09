@@ -6,8 +6,7 @@ void init(Plugin *p)
 {
 	pluginInstance = p;
 
-	// Add modules here
-	// p->addModel(modelMyModule);
+	p->addModel(modelBrst);
 	p->addModel(modelBss);
 	p->addModel(modelCrcl);
 	p->addModel(modelNtrvlc);
@@ -15,5 +14,6 @@ void init(Plugin *p)
 	p->addModel(modelSpc);
 	p->addModel(modelStpr);
 	p->addModel(modelTxt);
+	p->addModel(modelVbrt);
 	p->addModel(modelWhl);
 }

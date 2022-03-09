@@ -14,6 +14,18 @@
   "changelogUrl": "https://github.com/Lyqst/cvly-modules/blob/master/CHANGELOG.md",
   "modules": [
     {
+      "slug": "brst",
+      "name": "brst",
+      "description": "Burst generator with up to 8 outputs",
+      "tags": [
+        "poly",
+        "sample and hold",
+        "sequencer",
+        "switch"
+      ],
+      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/master/docs/brst.md"
+    },
+    {
       "slug": "bss",
       "name": "bss",
       "description": "Generates a bass note for the incoming poly input, using one of three modes",
@@ -85,6 +97,16 @@
       "tags": [
         "expander",
         "utility"
+      ]
+    },
+    {
+      "slug": "vbrt",
+      "name": "vbrt",
+      "description": "Multiple pitch voltage detuner with incorporated per-channel LFO",
+      "tags": [
+        "multiple",
+        "lfo",
+        "poly"
       ]
     },
     {

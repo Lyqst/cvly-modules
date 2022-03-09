@@ -2,6 +2,9 @@
 ### Main:
 * Updated for Rack 2.
 * UI rework.
+### New modules
+* **brst**: Burst generator with up to 8 outputs.
+* **vbrt**: Multiple pitch voltage detuner with incorporated per-channel LFO.
 ### Other changes:
 * Added polyphonic gate input to **bss** and **spc**.
 * Added context menu option to **bss** to select minimum working polyphony.
