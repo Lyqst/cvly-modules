@@ -161,17 +161,16 @@ struct Spc : Module
 struct SpcNoteWidget : rack::TransparentWidget
 {
     Spc *module;
-    std::shared_ptr<rack::Font> font;
     char str[4];
     static constexpr const char *notes = "CCDDEFFGGAAB";
     static constexpr const char *sharps = " # #  # # # ";
+    const std::string fontPath = "res/fonts/ninepin.regular.ttf";
 
     SpcNoteWidget(rack::Vec pos, rack::Vec size, Spc *module)
     {
         box.size = size;
         box.pos = pos.minus(size.div(2));
         this->module = module;
-        this->font = APP->window->loadFont(asset::plugin(pluginInstance, "res/fonts/ninepin.regular.ttf"));
     }
 
     void getString()
@@ -190,17 +189,20 @@ struct SpcNoteWidget : rack::TransparentWidget
 
     void draw(const DrawArgs &args) override
     {
-        NVGcolor textColor = nvgRGB(0x78, 0xD8, 0xC8);
+        std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, fontPath));
+        if (font)
+        {
+            nvgFontFaceId(args.vg, font->handle);
 
-        nvgFontSize(args.vg, 12);
-        nvgFontFaceId(args.vg, this->font->handle);
-        nvgTextLetterSpacing(args.vg, 1);
-        nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
+            nvgFontSize(args.vg, 12);
+            nvgTextLetterSpacing(args.vg, 1);
+            nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
 
-        Vec textPos = Vec(box.size.x - 6, 18);
-        nvgFillColor(args.vg, textColor);
-        getString();
-        nvgText(args.vg, textPos.x, textPos.y, str, NULL);
+            nvgFillColor(args.vg, nvgRGB(100, 246, 237));
+            getString();
+            Vec textPos = Vec(box.size.x - 6, 18);
+            nvgText(args.vg, textPos.x, textPos.y, str, NULL);
+        }
     }
 };
 

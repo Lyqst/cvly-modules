@@ -400,7 +400,7 @@ struct NtrvlcNoteWidget : rack::TransparentWidget
 		}
 		else
 		{
-			snprintf(str, sizeof(str), " =)");
+			snprintf(str, sizeof(str), "hi ");
 		}
 	}
 
