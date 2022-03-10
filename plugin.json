@@ -8,10 +8,10 @@
   "authorEmail": "beno.appel@gmail.com",
   "authorUrl": "",
   "pluginUrl": "",
-  "manualUrl": "https://github.com/Lyqst/cvly-modules#modules",
+  "manualUrl": "https://github.com/Lyqst/cvly-modules/tree/v2/docs",
   "sourceUrl": "https://github.com/Lyqst/cvly-modules",
   "donateUrl": "https://ko-fi.com/cvlymodules",
-  "changelogUrl": "https://github.com/Lyqst/cvly-modules/blob/master/CHANGELOG.md",
+  "changelogUrl": "https://github.com/Lyqst/cvly-modules/blob/v2/CHANGELOG.md",
   "modules": [
     {
       "slug": "brst",
@@ -23,7 +23,7 @@
         "sequencer",
         "switch"
       ],
-      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/master/docs/brst.md"
+      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/v2/docs/brst.md#brst"
     },
     {
       "slug": "bss",
@@ -35,7 +35,7 @@
         "sample and hold",
         "utility"
       ],
-      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/master/docs/bss.md"
+      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/v2/docs/bss.md#bss"
     },
     {
       "slug": "crcl",
@@ -47,7 +47,7 @@
         "sample and hold",
         "sequencer"
       ],
-      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/master/docs/crcl.md"
+      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/v2/docs/crcl.md#crcl"
     },
     {
       "slug": "ntrvlc",
@@ -58,7 +58,7 @@
         "poly",
         "sequencer"
       ],
-      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/master/docs/ntrvlc.md"
+      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/v2/docs/ntrvlc.md#ntrvlc"
     },
     {
       "slug": "ntrvlx",
@@ -67,7 +67,7 @@
       "tags": [
         "expander"
       ],
-      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/master/docs/ntrvlc.md#ntrvlx-expander"
+      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/v2/docs/ntrvlc.md#ntrvlx-expander"
     },
     {
       "slug": "spc",
@@ -78,7 +78,7 @@
         "poly",
         "utility"
       ],
-      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/master/docs/spc.md"
+      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/v2/docs/spc.md#spc"
     },
     {
       "slug": "stpr",
@@ -88,7 +88,7 @@
         "sequencer",
         "switch"
       ],
-      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/master/docs/stpr.md"
+      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/v2/docs/stpr.md#stpr"
     },
     {
       "slug": "txt",
@@ -107,7 +107,8 @@
         "multiple",
         "lfo",
         "poly"
-      ]
+      ],
+      "manualUrl": "https://github.com/Lyqst/cvly-modules/blob/v2/docs/vbrt.md#vbrt"
     },
     {
       "slug": "whl",
