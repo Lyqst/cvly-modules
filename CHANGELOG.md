@@ -1,3 +1,9 @@
+## 2.0.1
+### Fixes:
+* Fixed Font references stored across frames in bss and spc ([issue #9](https://github.com/Lyqst/cvly-modules/issues/9))
+### Other changes:
+* Changed manual urls to point to v2 page and added missing manual url for vbrt
+
 ## 2.0.0
 ### Main:
 * Updated for Rack 2.
