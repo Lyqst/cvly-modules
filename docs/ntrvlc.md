@@ -1,7 +1,7 @@
 # ntrvlc
 _Pronounced "Intervallic"_
 ***
-![ntrvlc](https://library.vcvrack.com/screenshots/cvly/ntrvlc.m.png)
+![ntrvlc](./screenshots/ntrvlc.png)
 
 Four 8-step sequences with an incorporated equi-likely quantizer. Each of the four sequences has an independent clock input and a separate output, along with a common polyphonic output. Only sequences with a connected clock input will be sent to the poly out.
 
@@ -13,7 +13,7 @@ Voltage range can be set in the context menu.
 If the stack button is on, the first active sequencer will work normally, but each subsequent sequence will be built on top of the last one, adding or subtracting from the previous voltage. If it's off, each sequencer will function independently.
 
 ## ntrvlx expander
-![ntrvlx](https://library.vcvrack.com/screenshots/cvly/ntrvlx.m.png)
+![ntrvlx](./screenshots/ntrvlx.png)
 
 The expander adds two controls over the stacking function: weight and snap.
 

@@ -1,7 +1,7 @@
 # vbrt
 _Pronounced "Vibrate"_
 ***
-![vbrt](https://library.vcvrack.com/screenshots/cvly/vbrt.m.png)
+![vbrt](./screenshots/vbrt.png)
 
 Multiple pitch voltage detuner with incorporated per-channel LFO.
 

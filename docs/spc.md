@@ -1,7 +1,7 @@
 # spc
 _Pronounced "Space"_
 ***
-![spc](https://library.vcvrack.com/screenshots/cvly/spc.m.png)
+![spc](./screenshots/spc.png)
 
 Utility module that spreads an incoming chord using a settable minimum interval distance between notes.
 

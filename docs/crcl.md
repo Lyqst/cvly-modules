@@ -1,7 +1,7 @@
 # crcl
 _Pronounced "Circle"_
 ***
-![crcl](https://library.vcvrack.com/screenshots/cvly/crcl.m.png)
+![crcl](./screenshots/crcl.png)
 
 Multimode module based on the [circle of fifths](https://en.wikipedia.org/wiki/Circle_of_fifths)
 

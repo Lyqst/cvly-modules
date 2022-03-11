@@ -1,7 +1,7 @@
 # brst
 _Pronounced "Burst"_
 ***
-![brst](https://library.vcvrack.com/screenshots/cvly/brst.m.png)
+![brst](./screenshots/brst.png)
 
 Burst generator with up to 8 outputs.
 

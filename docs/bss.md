@@ -1,7 +1,7 @@
 # bss
 _Pronounced "Bass"_
 ***
-![bss](https://library.vcvrack.com/screenshots/cvly/bss.m.png)
+![bss](./screenshots/bss.png)
 
 Utilty module that attempts to find a bass note for an incoming chord. It has three modes: Harmonic, Lowest and Random.
 
