@@ -373,7 +373,7 @@ struct NtrvlcNoteWidget : rack::TransparentWidget
 	char str[4];
 	static constexpr const char *notes = "CCDDEFFGGAAB";
 	static constexpr const char *sharps = " # #  # # # ";
-	const std::string fontPath = "res/fonts/ninepin.regular.ttf";
+	const std::string fontPath = "res/fonts/fx-4000p.ttf";
 
 	NtrvlcNoteWidget(rack::Vec pos, rack::Vec size, Ntrvlc *module)
 	{
@@ -411,7 +411,7 @@ struct NtrvlcNoteWidget : rack::TransparentWidget
 		{
 			nvgFontFaceId(args.vg, font->handle);
 
-			nvgFontSize(args.vg, 12);
+			nvgFontSize(args.vg, 11);
 			nvgTextLetterSpacing(args.vg, 1);
 			nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
 
